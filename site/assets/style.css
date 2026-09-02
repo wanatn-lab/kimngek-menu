@@ -26,7 +26,7 @@ a { color: inherit; }
 .nav-links a:hover { color: var(--red); }
 
 .hero { min-height: 625px; display: grid; align-items: center; overflow: hidden; position: relative; background: #29140f; color: #fff9ee; }
-.hero::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 73% 37%, rgba(211, 146, 55, .56), transparent 0 19%), radial-gradient(circle at 77% 63%, rgba(156, 41, 30, .95), transparent 0 20%), linear-gradient(115deg, #260d0a 0%, #47130d 49%, #8f2a1e 100%); }
+.hero::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(38, 13, 10, .97) 0%, rgba(71, 19, 13, .83) 45%, rgba(68, 21, 12, .16) 100%), linear-gradient(0deg, rgba(30, 10, 7, .28), rgba(30, 10, 7, .28)), url("../images/web/08-img_6818.webp") center / cover; }
 .hero::after { content: ""; position: absolute; width: 47vw; max-width: 620px; aspect-ratio: 1; right: -5vw; bottom: -17vw; border: 24px solid rgba(255, 240, 210, .14); border-radius: 50%; box-shadow: inset 0 0 0 28px rgba(35, 10, 7, .13); transform: rotate(-12deg); }
 .hero-grid { z-index: 1; position: relative; display: grid; grid-template-columns: minmax(0, 710px) 1fr; padding: 102px 0 88px; }
 .eyebrow { color: #f7cb7b; font-size: .79rem; letter-spacing: .16em; text-transform: uppercase; font-weight: 700; }
@@ -62,7 +62,7 @@ h1 { max-width: 710px; margin: 12px 0 20px; font: 700 clamp(2.65rem, 7vw, 5.7rem
 
 .story { background: var(--paper-deep); }
 .story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(36px, 8vw, 128px); align-items: center; }
-.story-card { min-height: 390px; position: relative; display: flex; align-items: end; padding: 36px; border-radius: 14px; overflow: hidden; background: linear-gradient(160deg, #6e2118 0%, #9a2c1e 42%, #d19542 100%); color: #fff7e9; box-shadow: var(--shadow); }
+.story-card { min-height: 390px; position: relative; display: flex; align-items: end; padding: 36px; border-radius: 14px; overflow: hidden; background: linear-gradient(160deg, rgba(82, 20, 13, .88) 0%, rgba(137, 40, 24, .75) 48%, rgba(89, 42, 10, .68) 100%), url("../images/web/07-img_6816.webp") center / cover; color: #fff7e9; box-shadow: var(--shadow); }
 .story-card::before { content: ""; position: absolute; inset: 16px; border: 1px solid rgba(255, 238, 205, .45); border-radius: 4px; }
 .story-card::after { content: "金"; position: absolute; top: -54px; right: 16px; color: rgba(255, 238, 205, .16); font: 700 16rem/1 Georgia, serif; }
 .story-card p { position: relative; z-index: 1; max-width: 310px; margin: 0; font: 600 1.35rem/1.58 "Noto Serif Thai", serif; }
@@ -79,9 +79,11 @@ h1 { max-width: 710px; margin: 12px 0 20px; font: 700 clamp(2.65rem, 7vw, 5.7rem
 .map { display: block; width: 100%; min-height: 390px; border: 0; border-radius: 12px; box-shadow: var(--shadow); background: #e4d5bf; }
 
 .blog-teaser { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-.teaser { min-height: 210px; padding: 25px; display: flex; flex-direction: column; justify-content: end; background: #fff9ee; border: 1px solid var(--line); text-decoration: none; transition: transform .2s ease, box-shadow .2s ease; }
+.teaser { min-height: 210px; padding: 25px; display: flex; flex-direction: column; justify-content: end; color: #fff9ee; background: linear-gradient(0deg, rgba(31, 18, 11, .88), rgba(31, 18, 11, .08)), #fff9ee; border: 1px solid var(--line); text-decoration: none; transition: transform .2s ease, box-shadow .2s ease; }
+.teaser:nth-child(1) { background-image: linear-gradient(0deg, rgba(31, 18, 11, .9), rgba(31, 18, 11, .08)), url("../images/web/01-img_6802.webp"); background-position: center; background-size: cover; }
+.teaser:nth-child(2) { background-image: linear-gradient(0deg, rgba(31, 18, 11, .9), rgba(31, 18, 11, .08)), url("../images/web/03-img_6807.webp"); background-position: center; background-size: cover; }
 .teaser:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
-.teaser small { color: var(--red); font-weight: 700; }
+.teaser small { color: #ffd38b; font-weight: 700; }
 .teaser h3 { margin: 8px 0 0; font: 700 1.32rem/1.45 "Noto Serif Thai", serif; }
 
 .site-footer { background: #24150f; color: #f7ebda; padding: 48px 0 28px; }
@@ -118,4 +120,3 @@ h1 { max-width: 710px; margin: 12px 0 20px; font: 700 clamp(2.65rem, 7vw, 5.7rem
 }
 
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition-duration: .01ms !important; } }
-
