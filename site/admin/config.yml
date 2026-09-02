@@ -1,0 +1,45 @@
+backend:
+  name: github
+  repo: "wanatn-lab/kimngek-menu"
+  branch: main
+  base_url: "[WORKER_URL]"
+  auth_endpoint: auth
+
+media_folder: "images"
+public_folder: "/images"
+
+collections:
+  - name: "site_settings"
+    label: "ข้อมูลร้าน"
+    files:
+      - file: "data/site.json"
+        label: "ที่อยู่ / เบอร์โทร / เวลาเปิด-ปิด"
+        name: "site"
+        fields:
+          - { label: "ชื่อร้าน", name: "name", widget: "string" }
+          - { label: "ที่อยู่เต็ม", name: "address", widget: "string" }
+          - { label: "เบอร์โทร (ตัวเลขล้วน ไม่มีขีด)", name: "phone_raw", widget: "string" }
+          - { label: "เบอร์โทร (แสดงผล มีขีด)", name: "phone_display", widget: "string" }
+          - { label: "เวลาเปิด", name: "hours_open", widget: "string" }
+          - { label: "เวลาปิด", name: "hours_close", widget: "string" }
+          - { label: "ข้อความเวลาเปิด-ปิด (แสดงผล)", name: "hours_display", widget: "string" }
+          - { label: "พิกัด GPS ละติจูด", name: "gps_lat", widget: "number" }
+          - { label: "พิกัด GPS ลองจิจูด", name: "gps_lng", widget: "number" }
+          - { label: "ลิงก์ Facebook", name: "facebook_url", widget: "string" }
+
+  - name: "menu"
+    label: "เมนูอาหาร"
+    files:
+      - file: "data/menu.json"
+        label: "รายการเมนูทั้งหมด"
+        name: "menu"
+        fields:
+          - label: "รายการเมนู"
+            name: "items"
+            widget: "list"
+            fields:
+              - { label: "รหัสเมนู (ห้ามซ้ำ, ภาษาอังกฤษ)", name: "id", widget: "string" }
+              - { label: "ชื่อเมนู", name: "name", widget: "string" }
+              - { label: "คำโปรย", name: "desc", widget: "text" }
+              - { label: "ราคา (บาท)", name: "price", widget: "number" }
+              - { label: "รูปเมนู", name: "image", widget: "image" }

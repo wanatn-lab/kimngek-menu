@@ -1,0 +1,11 @@
+name = "WORKER_NAME"
+main = "src/index.js"
+compatibility_date = "2026-09-02"
+
+[vars]
+# Set to "1" when the GitHub repository is private.
+GITHUB_REPO_PRIVATE = "0"
+
+[secrets]
+required = ["GITHUB_OAUTH_ID", "GITHUB_OAUTH_SECRET"]
+
