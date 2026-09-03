@@ -1,24 +1,23 @@
 # กิมเง็ก ข้าวหมูแดงเกรดพิธี
 
-เว็บไซต์เมนูแบบ static สำหรับ Cloudflare Pages พร้อม SEO/GEO และ Decap CMS ที่ `/admin`.
+เว็บไซต์เมนูแบบ static สำหรับ Cloudflare Workers Static Assets พร้อม SEO/GEO และ Decap CMS ที่ `/admin`.
 
-## ข้อมูลที่ต้องเติมก่อนเผยแพร่จริง
+## เนื้อหาที่ติดตั้งแล้ว
 
-เอกสารต้นทางไม่มีเว็บไซต์เดิมหรือรูปเมนูมาให้ จึงมีเฉพาะรายการเมนูที่ระบุรายละเอียดจริงในบรีฟ 1 รายการ และไฟล์รูป `images/khao-moo-dang.jpg` รอให้อัปโหลดผ่าน CMS หรือเพิ่มลงโฟลเดอร์นั้นโดยตรงก่อนเผยแพร่จริง
+- ดีไซน์เดิมจากไฟล์ต้นฉบับ: โทนไวน์/ทอง/ครีม, Hero ภาษาไทย และหัวข้อเลขไทย ๐๑–๐๕
+- เมนูจริง 6 รายการ พร้อมภาพอาหารที่เลือกจากภาพที่ผู้ใช้ให้มา
+- SEO/GEO: canonical, Open Graph, Twitter Card, Restaurant/FAQ/Menu/BlogPosting/Breadcrumb schema, `robots.txt` และ `sitemap.xml`
+- Decap CMS ที่ `/admin/` สำหรับแก้ข้อมูลร้านและเมนูใน GitHub
 
-แก้ placeholder เหล่านี้ก่อนใช้งานจริง:
+URL ปัจจุบันใน canonical และ sitemap คือ `https://kimngek-menu.wanat-n.workers.dev/` หากเปลี่ยนเป็น custom domain ให้ปรับ URL เหล่านี้พร้อมกัน
 
-- `[DOMAIN_จริง]` ใน canonical, schema, sitemap และไฟล์บทความ
-- `[WORKER_URL]` ใน `site/admin/config.yml`
-- `WORKER_NAME` และ `GITHUB_REPO_PRIVATE` ใน `worker/wrangler.toml`
-
-## Deploy บน Cloudflare Pages
+## Deploy บน Cloudflare Workers
 
 1. สร้าง repository บน GitHub แล้ว push โค้ดชุดนี้ไปยัง branch `main`.
-2. ใน Cloudflare Dashboard เลือก **Workers & Pages** → **Create application** → **Pages** → **Connect to Git**.
-3. เลือก repository นี้ ตั้งค่า **Production branch** เป็น `main`, **Build command** เป็นค่าว่าง และ **Build output directory** เป็น `site`.
-4. Deploy ครั้งแรก แล้วคัดลอกโดเมน Pages จริงมาแทน `[DOMAIN_จริง]` ในไฟล์ที่ระบุข้างต้น จากนั้น push อีกครั้ง.
-5. เพิ่มโดเมนจริงใน Google Search Console และส่ง `https://[DOMAIN_จริง]/sitemap.xml`.
+2. จากโฟลเดอร์ `site/` รัน `npx wrangler deploy --name kimngek-menu`.
+3. `site/wrangler.toml` จะเผยแพร่ไฟล์ static ทั้งหมดด้วย Workers Static Assets และ `.assetsignore` จะเก็บไฟล์ต้นฉบับ HEIC/ZIP ไว้ใน GitHub แต่ไม่นำขึ้น public assets.
+4. ตรวจ URL, `/robots.txt`, `/sitemap.xml` และ `/admin/` หลัง deploy.
+5. เพิ่มโดเมนจริงใน Google Search Console และส่ง sitemap ของโดเมนนั้น.
 
 ## เปิดใช้งานหลังบ้าน `/admin`
 

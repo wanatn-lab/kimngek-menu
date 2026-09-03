@@ -41,5 +41,5 @@ collections:
               - { label: "รหัสเมนู (ห้ามซ้ำ, ภาษาอังกฤษ)", name: "id", widget: "string" }
               - { label: "ชื่อเมนู", name: "name", widget: "string" }
               - { label: "คำโปรย", name: "desc", widget: "text" }
-              - { label: "ราคา (บาท)", name: "price", widget: "number" }
+              - { label: "ราคา (เช่น 60 หรือ 280/กก.)", name: "price", widget: "string" }
               - { label: "รูปเมนู", name: "image", widget: "image" }

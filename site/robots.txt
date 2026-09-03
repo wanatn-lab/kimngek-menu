@@ -1,6 +1,4 @@
 User-agent: *
 Allow: /
 Disallow: /admin/
-
-Sitemap: https://[DOMAIN_จริง]/sitemap.xml
-
+Sitemap: https://kimngek-menu.wanat-n.workers.dev/sitemap.xml

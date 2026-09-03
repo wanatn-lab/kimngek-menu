@@ -1,4 +1,10 @@
 (function () {
+  function escapeHtml(value) {
+    return String(value == null ? "" : value).replace(/[&<>"']/g, function (character) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[character];
+    });
+  }
+
   function setText(el, text) {
     if (!el || text == null) return;
     el.textContent = text;
@@ -28,15 +34,13 @@
     var container = document.getElementById("menu-list");
     if (!container || !Array.isArray(items)) return;
     var html = items.map(function (item) {
-      var name = String(item.name || "");
-      var desc = String(item.desc || "");
-      var image = String(item.image || "");
-      var price = Number(item.price || 0).toLocaleString("th-TH");
+      var name = escapeHtml(item.name);
+      var desc = escapeHtml(item.desc);
+      var image = escapeHtml(item.image);
+      var price = escapeHtml(item.price);
       return "" +
         '<article class="row">' +
-        '<div class="menu-photo">' +
-        '<img class="thumb" src="' + image + '" alt="' + name + ' — ข้าวหมูแดงเกรดพิธี ร้านกิมเง็ก สุพรรณบุรี" loading="lazy" width="156" height="156">' +
-        '</div>' +
+        '<img class="thumb" src="' + image + '" alt="' + name + ' — ข้าวหมูแดงเกรดพิธี ร้านกิมเง็ก สุพรรณบุรี" loading="lazy" width="78" height="78">' +
         '<div class="body">' +
         '<div class="priceline"><h3>' + name + '</h3><span class="dots"></span><span class="price">฿' + price + '</span></div>' +
         '<p>' + desc + '</p>' +
@@ -60,7 +64,7 @@
             "@type": "MenuItem",
             "name": item.name,
             "description": item.desc,
-            "offers": { "@type": "Offer", "price": item.price, "priceCurrency": "THB" }
+            "offers": { "@type": "Offer", "price": String(item.price || "").replace(/[^0-9.]/g, ""), "priceCurrency": "THB" }
           };
         })
       }]
@@ -85,4 +89,3 @@
     }
   });
 })();
-
