@@ -26,9 +26,43 @@ function randomState() {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    const isOAuthCallback = url.pathname === "/callback" || (
+      url.pathname === "/" && (url.searchParams.has("code") || url.searchParams.has("error"))
+    );
+
+    // Accept the configured callback path and a root-path fallback. The fallback
+    // protects the sign-in flow if the OAuth app still has the Worker origin as
+    // its callback URL while its settings are being updated.
+    if (isOAuthCallback) {
+      if (url.searchParams.get("provider") && url.searchParams.get("provider") !== "github") {
+        return html("Invalid OAuth provider.", 400);
+      }
+      const storedState = request.headers.get("cookie")?.match(/(?:^|;\\s*)decap_oauth_state=([^;]+)/)?.[1];
+      const state = url.searchParams.get("state");
+      const code = url.searchParams.get("code");
+      if (!code || !state || !storedState || state !== storedState) {
+        return callbackResponse("error", { error: "OAuth validation failed. Please try again." });
+      }
+
+      const tokenResponse = await fetch(GITHUB_TOKEN_URL, {
+        method: "POST",
+        headers: { "content-type": "application/json", accept: "application/json" },
+        body: JSON.stringify({
+          client_id: env.GITHUB_OAUTH_ID,
+          client_secret: env.GITHUB_OAUTH_SECRET,
+          code,
+          redirect_uri: `${url.origin}/callback`
+        })
+      });
+      const tokenData = await tokenResponse.json();
+      if (!tokenResponse.ok || !tokenData.access_token) {
+        return callbackResponse("error", { error: tokenData.error_description || "GitHub token exchange failed." });
+      }
+      return callbackResponse("success", { token: tokenData.access_token });
+    }
 
     if (url.pathname === "/") {
-      return html("<p>Decap CMS OAuth proxy is running.</p>");
+      return html('<p>นี่คือบริการยืนยันตัวตนสำหรับ CMS</p><p>กลับไปที่ <a href="https://kimngek-menu.wanat-n.workers.dev/admin/">หน้า CMS</a> เพื่อแก้ไขเว็บไซต์</p>');
     }
 
     if (url.pathname === "/health") {
@@ -58,38 +92,10 @@ export default {
         status: 302,
         headers: {
           location: authorizeUrl.toString(),
-          "set-cookie": `decap_oauth_state=${state}; Path=/callback; HttpOnly; Secure; SameSite=Lax; Max-Age=600`,
+          "set-cookie": `decap_oauth_state=${state}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=600`,
           "cache-control": "no-store"
         }
       });
-    }
-
-    if (url.pathname === "/callback") {
-      if (url.searchParams.get("provider") && url.searchParams.get("provider") !== "github") {
-        return html("Invalid OAuth provider.", 400);
-      }
-      const storedState = request.headers.get("cookie")?.match(/(?:^|;\\s*)decap_oauth_state=([^;]+)/)?.[1];
-      const state = url.searchParams.get("state");
-      const code = url.searchParams.get("code");
-      if (!code || !state || !storedState || state !== storedState) {
-        return callbackResponse("error", { error: "OAuth validation failed. Please try again." });
-      }
-
-      const tokenResponse = await fetch(GITHUB_TOKEN_URL, {
-        method: "POST",
-        headers: { "content-type": "application/json", accept: "application/json" },
-        body: JSON.stringify({
-          client_id: env.GITHUB_OAUTH_ID,
-          client_secret: env.GITHUB_OAUTH_SECRET,
-          code,
-          redirect_uri: `${url.origin}/callback`
-        })
-      });
-      const tokenData = await tokenResponse.json();
-      if (!tokenResponse.ok || !tokenData.access_token) {
-        return callbackResponse("error", { error: tokenData.error_description || "GitHub token exchange failed." });
-      }
-      return callbackResponse("success", { token: tokenData.access_token });
     }
 
     return html("Not found.", 404);
