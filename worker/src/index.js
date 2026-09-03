@@ -41,7 +41,7 @@ export default {
       const authorizeUrl = new URL(GITHUB_AUTHORIZE_URL);
       authorizeUrl.search = new URLSearchParams({
         client_id: env.GITHUB_OAUTH_ID,
-        redirect_uri: `${url.origin}/callback?provider=github`,
+        redirect_uri: `${url.origin}/callback`,
         scope: isPrivate ? "repo,user" : "public_repo,user",
         state
       }).toString();
@@ -57,7 +57,7 @@ export default {
     }
 
     if (url.pathname === "/callback") {
-      if (url.searchParams.get("provider") !== "github") {
+      if (url.searchParams.get("provider") && url.searchParams.get("provider") !== "github") {
         return html("Invalid OAuth provider.", 400);
       }
       const storedState = request.headers.get("cookie")?.match(/(?:^|;\\s*)decap_oauth_state=([^;]+)/)?.[1];
@@ -74,7 +74,7 @@ export default {
           client_id: env.GITHUB_OAUTH_ID,
           client_secret: env.GITHUB_OAUTH_SECRET,
           code,
-          redirect_uri: `${url.origin}/callback?provider=github`
+          redirect_uri: `${url.origin}/callback`
         })
       });
       const tokenData = await tokenResponse.json();
@@ -87,4 +87,3 @@ export default {
     return html("Not found.", 404);
   }
 };
-

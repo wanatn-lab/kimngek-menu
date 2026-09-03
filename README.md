@@ -23,7 +23,7 @@ URL ปัจจุบันใน canonical และ sitemap คือ `https:
 
 Decap CMS เขียนไฟล์ JSON กลับเข้า GitHub จึงต้องใช้ GitHub OAuth proxy แยกต่างหากบน Cloudflare Worker:
 
-1. สร้าง GitHub OAuth App โดยตั้ง **Homepage URL** เป็น URL ของ Worker และ **Authorization callback URL** เป็น `https://kimngek-cms-auth.wanat-n.workers.dev/callback?provider=github`.
+1. สร้าง GitHub OAuth App โดยตั้ง **Homepage URL** เป็น URL ของ Worker และ **Authorization callback URL** เป็น `https://kimngek-cms-auth.wanat-n.workers.dev/callback`.
 2. OAuth Worker ถูกตั้งชื่อเป็น `kimngek-cms-auth` ใน `worker/wrangler.toml`; เปลี่ยน `GITHUB_REPO_PRIVATE` เป็น `"1"` เฉพาะเมื่อ repository เป็น private แล้ว deploy Worker.
 3. เพิ่ม secrets `GITHUB_OAUTH_ID` และ `GITHUB_OAUTH_SECRET` ให้ Worker ผ่าน Cloudflare Dashboard หรือ `npx wrangler secret put` (ห้ามใส่ secrets ไว้ใน Git).
 4. `site/admin/config.yml` ตั้ง `base_url` เป็น `https://kimngek-cms-auth.wanat-n.workers.dev` แล้ว.
