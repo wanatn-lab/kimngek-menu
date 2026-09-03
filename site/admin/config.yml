@@ -2,7 +2,7 @@ backend:
   name: github
   repo: "wanatn-lab/kimngek-menu"
   branch: main
-  base_url: "[WORKER_URL]"
+  base_url: "https://kimngek-cms-auth.wanat-n.workers.dev"
   auth_endpoint: auth
 
 media_folder: "images"

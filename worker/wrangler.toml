@@ -1,4 +1,4 @@
-name = "WORKER_NAME"
+name = "kimngek-cms-auth"
 main = "src/index.js"
 compatibility_date = "2026-09-02"
 
@@ -8,4 +8,3 @@ GITHUB_REPO_PRIVATE = "0"
 
 [secrets]
 required = ["GITHUB_OAUTH_ID", "GITHUB_OAUTH_SECRET"]
-
