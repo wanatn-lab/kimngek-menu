@@ -31,6 +31,14 @@ export default {
       return html("<p>Decap CMS OAuth proxy is running.</p>");
     }
 
+    if (url.pathname === "/health") {
+      return Response.json({
+        service: "kimngek-cms-auth",
+        githubOAuthClientConfigured: Boolean(env.GITHUB_OAUTH_ID),
+        githubOAuthSecretConfigured: Boolean(env.GITHUB_OAUTH_SECRET)
+      }, { headers: { "cache-control": "no-store" } });
+    }
+
     if (url.pathname === "/auth") {
       if (url.searchParams.get("provider") !== "github") {
         return html("Invalid OAuth provider.", 400);
