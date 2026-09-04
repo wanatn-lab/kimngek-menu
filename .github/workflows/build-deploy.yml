@@ -1,0 +1,41 @@
+name: Build blog & deploy to Cloudflare
+
+# ทำงานอัตโนมัติทุกครั้งที่มีการ commit เข้า branch main
+# (เช่น เมื่อกด "บันทึกการเปลี่ยนแปลง" จากหน้า /admin)
+# ขั้นตอน: 1) รัน scripts/build-blog.js สร้างหน้าบทความ + sitemap ใหม่
+#          2) deploy โฟลเดอร์ site/ ขึ้น Cloudflare Workers ด้วย Wrangler
+#
+# ต้องตั้งค่า secret ก่อนใช้งาน (Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_API_TOKEN  — API token ที่มีสิทธิ์ Workers Scripts: Edit
+#   CLOUDFLARE_ACCOUNT_ID — Account ID ของ Cloudflare (ดูที่มุมขวาของ dashboard)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: สร้างหน้าบทความ + sitemap จากข้อมูลล่าสุด
+        run: node scripts/build-blog.js
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: site
+          command: deploy --name kimngek-menu
