@@ -99,14 +99,23 @@
     }
   }
 
+  function fetchJson(url) {
+    return fetch(url).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
+  }
+
+  // ข้อมูลร้านตอนนี้แยกเป็นหลายไฟล์ (site.json, banner.json, hero.json, about.json)
+  // เพื่อให้หน้าแอดมินแบ่งเป็นหมวดย่อยที่หาง่ายขึ้น — โค้ดฝั่งนี้รวมทุกไฟล์เป็นก้อนเดียวก่อนใช้งาน
   Promise.all([
-    fetch("/data/site.json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
-    fetch("/data/menu.json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+    fetchJson("/data/site.json"),
+    fetchJson("/data/banner.json"),
+    fetchJson("/data/hero.json"),
+    fetchJson("/data/about.json"),
+    fetchJson("/data/menu.json")
   ]).then(function (results) {
-    var site = results[0];
-    var menuData = results[1];
+    var site = Object.assign({}, results[0] || {}, results[1] || {}, results[2] || {}, results[3] || {});
+    var menuData = results[4];
     var items = menuData && Array.isArray(menuData.items) ? menuData.items : null;
-    if (site) applySiteData(site);
+    if (results[0] || results[1] || results[2] || results[3]) applySiteData(site);
     if (items) {
       renderMenu(items);
       injectMenuSchema(items);

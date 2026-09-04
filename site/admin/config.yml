@@ -13,8 +13,9 @@ collections:
     label: "ข้อมูลร้าน"
     files:
       - file: "data/site.json"
-        label: "ที่อยู่ / เบอร์โทร / เวลาเปิด-ปิด"
+        label: "📍 ข้อมูลติดต่อร้าน"
         name: "site"
+        description: "ชื่อร้าน ที่อยู่ เบอร์โทร เวลาเปิด-ปิด และพิกัดแผนที่"
         fields:
           - { label: "ชื่อร้าน", name: "name", widget: "string" }
           - { label: "ที่อยู่เต็ม", name: "address", widget: "string" }
@@ -26,24 +27,43 @@ collections:
           - { label: "พิกัด GPS ละติจูด", name: "gps_lat", widget: "number" }
           - { label: "พิกัด GPS ลองจิจูด", name: "gps_lng", widget: "number" }
           - { label: "ลิงก์ Facebook", name: "facebook_url", widget: "string" }
-          - { label: "ข้อความแบนเนอร์ประกาศด้านบนเว็บ (เว้นว่าง = ไม่แสดง)", name: "banner_text", widget: "string", required: false }
-          - { label: "หัวข้อใหญ่หน้าแรก บรรทัดที่ 1", name: "hero_title_line1", widget: "string" }
-          - { label: "หัวข้อใหญ่หน้าแรก บรรทัดที่ 2 (ตัวเน้นสีทอง)", name: "hero_title_line2", widget: "string" }
-          - { label: "คำโปรยใต้หัวข้อหน้าแรก", name: "hero_subtitle", widget: "text" }
-          - { label: "รูปหน้าแรก (Hero)", name: "hero_image", widget: "image" }
-          - { label: "หัวข้อใหญ่หน้าเกี่ยวกับเรา", name: "about_title", widget: "string" }
-          - { label: "เกี่ยวกับเรา พารากราฟที่ 1", name: "about_p1", widget: "text" }
-          - { label: "เกี่ยวกับเรา พารากราฟที่ 2", name: "about_p2", widget: "text" }
-          - { label: "รูปหน้าเกี่ยวกับเรา", name: "about_image", widget: "image" }
+
+      - file: "data/banner.json"
+        label: "📢 แบนเนอร์ประกาศ"
+        name: "banner"
+        description: "แถบข้อความแจ้งเตือนบนสุดของเว็บ เช่น วันหยุด/โปรโมชัน (เว้นว่าง = ไม่แสดงแบนเนอร์)"
+        fields:
+          - { label: "ข้อความแบนเนอร์ (เว้นว่าง = ไม่แสดง)", name: "banner_text", widget: "string", required: false }
+
+      - file: "data/hero.json"
+        label: "🏠 หน้าแรก (Hero)"
+        name: "hero"
+        description: "หัวข้อใหญ่ คำโปรย และรูปภาพหลักที่เห็นทันทีเมื่อเปิดเว็บ"
+        fields:
+          - { label: "หัวข้อใหญ่ บรรทัดที่ 1", name: "hero_title_line1", widget: "string" }
+          - { label: "หัวข้อใหญ่ บรรทัดที่ 2 (ตัวเน้นสีทอง)", name: "hero_title_line2", widget: "string" }
+          - { label: "คำโปรยใต้หัวข้อ", name: "hero_subtitle", widget: "text" }
+          - { label: "รูปหน้าแรก (ระบบจะย่อ/บีบอัดให้อัตโนมัติ)", name: "hero_image", widget: "compressed-image" }
+
+      - file: "data/about.json"
+        label: "ℹ️ เกี่ยวกับเรา"
+        name: "about"
+        description: "หัวข้อและเนื้อหาของส่วน “เรื่องราวร้าน”"
+        fields:
+          - { label: "หัวข้อใหญ่", name: "about_title", widget: "string" }
+          - { label: "พารากราฟที่ 1", name: "about_p1", widget: "text" }
+          - { label: "พารากราฟที่ 2", name: "about_p2", widget: "text" }
+          - { label: "รูปประกอบ (ระบบจะย่อ/บีบอัดให้อัตโนมัติ)", name: "about_image", widget: "compressed-image" }
 
   - name: "menu"
-    label: "เมนูอาหาร"
+    label: "🍽️ เมนูอาหาร"
     files:
       - file: "data/menu.json"
         label: "รายการเมนูทั้งหมด"
         name: "menu"
+        description: "ลากไอคอน ⠿ ที่แถบซ้ายของแต่ละรายการเพื่อสลับลำดับการแสดงผลบนเว็บ"
         fields:
-          - label: "รายการเมนู (ลากรูปแถบเพื่อเรียงลำดับ)"
+          - label: "รายการเมนู (ลากแถบเพื่อเรียงลำดับ)"
             name: "items"
             widget: "list"
             summary: "{{fields.name}} — ฿{{fields.price}}"
@@ -52,13 +72,13 @@ collections:
               - { label: "ชื่อเมนู", name: "name", widget: "string" }
               - { label: "คำโปรย", name: "desc", widget: "text" }
               - { label: "ราคา (เช่น 60 หรือ 280/กก.)", name: "price", widget: "string" }
-              - { label: "รูปเมนู", name: "image", widget: "image" }
+              - { label: "รูปเมนู (ระบบจะย่อ/บีบอัดให้อัตโนมัติ)", name: "image", widget: "compressed-image" }
               - { label: "หมวดหมู่", name: "category", widget: "string", required: false, hint: "เช่น เมนูข้าว, ซื้อกลับบ้าน" }
               - { label: "วิดีโอเมนู (ลิงก์ YouTube หรือไฟล์วิดีโอ)", name: "video", widget: "string", required: false }
               - { label: "ป้าย เมนูแนะนำ / เมนูต้องลอง", name: "featured", widget: "boolean", default: false }
 
   - name: "blog"
-    label: "บทความ SEO / GEO"
+    label: "✏️ บทความ SEO / GEO"
     folder: "data/blog"
     create: true
     slug: "{{fields.slug}}"
@@ -70,7 +90,7 @@ collections:
       - { label: "Meta description (สำหรับ SEO)", name: "meta_description", widget: "text" }
       - { label: "Slug (ภาษาอังกฤษ, ห้ามซ้ำ, ใช้เป็นชื่อไฟล์ URL)", name: "slug", widget: "string", hint: "เช่น khao-moo-dang-tips — ห้ามใส่เว้นวรรค" }
       - { label: "หมวดหมู่ / ป้ายแท็ก", name: "category", widget: "string", hint: "เช่น แนะนำร้าน, เบื้องหลังครัว" }
-      - { label: "รูปปกบทความ", name: "cover_image", widget: "image" }
+      - { label: "รูปปกบทความ (ระบบจะย่อ/บีบอัดให้อัตโนมัติ)", name: "cover_image", widget: "compressed-image" }
       - { label: "วันที่เผยแพร่", name: "date", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
       - { label: "ปักด้านบนสุดของหน้าบทความ", name: "pinned", widget: "boolean", default: false }
       - { label: "เผยแพร่แล้ว (ปิด = ซ่อนจากเว็บ ยังไม่ลบ)", name: "published", widget: "boolean", default: true }
