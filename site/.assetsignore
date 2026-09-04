@@ -5,3 +5,4 @@ images/*.HEIC
 images/drive-download-20260902T232655Z-1-001.zip
 images/web/
 data/blog/*.md
+node_modules/
