@@ -5,42 +5,60 @@
       "name": "ข้าวหมูแดง",
       "desc": "หมูแดงรมควันข้ามคืน หั่นสด ราดซอสเกรดพิธี พร้อมน้ำจิ้มและน้ำซุป",
       "price": "60",
-      "image": "/images/khao-moo-dang.jpg"
+      "image": "/images/khao-moo-dang.jpg",
+      "category": "เมนูข้าว",
+      "video": "",
+      "featured": true
     },
     {
       "id": "khao-moo-dang-special",
       "name": "ข้าวหมูแดงพิเศษ",
       "desc": "เพิ่มหมูแดงอีกเท่าตัว สำหรับคนหิวจัด",
       "price": "80",
-      "image": "/images/khao-moo-dang-special.jpg"
+      "image": "/images/khao-moo-dang-special.jpg",
+      "category": "เมนูข้าว",
+      "video": "",
+      "featured": false
     },
     {
       "id": "khao-moo-krob",
       "name": "ข้าวหมูกรอบ",
       "desc": "หนังกรอบ เนื้อนุ่ม ราดซอสสูตรเดียวกับหมูแดง",
       "price": "65",
-      "image": "/images/khao-moo-krob.jpg"
+      "image": "/images/khao-moo-krob.jpg",
+      "category": "เมนูข้าว",
+      "video": "",
+      "featured": false
     },
     {
       "id": "khao-sam-yang",
       "name": "ข้าวสามอย่าง",
       "desc": "หมูแดง หมูกรอบ ไส้กรอก ครบในจานเดียว",
       "price": "90",
-      "image": "/images/khao-sam-yang.jpg"
+      "image": "/images/khao-sam-yang.jpg",
+      "category": "เมนูข้าว",
+      "video": "",
+      "featured": true
     },
     {
       "id": "khao-moo-dang-egg",
       "name": "ข้าวหมูแดงไข่ต้ม",
       "desc": "เพิ่มไข่ต้มพะโล้ซอส กลมกล่อมขึ้นอีกขั้น",
       "price": "70",
-      "image": "/images/khao-moo-dang-egg.jpg"
+      "image": "/images/khao-moo-dang-egg.jpg",
+      "category": "เมนูข้าว",
+      "video": "",
+      "featured": false
     },
     {
       "id": "moo-dang-kilo",
       "name": "หมูแดงชั่งกิโล",
       "desc": "ซื้อกลับบ้าน แถมซอสเกรดพิธีแยกถุง (ขั้นต่ำครึ่งกิโล)",
       "price": "280/กก.",
-      "image": "/images/moo-dang-kilo.jpg"
+      "image": "/images/moo-dang-kilo.jpg",
+      "category": "ซื้อกลับบ้าน",
+      "video": "",
+      "featured": false
     }
   ]
 }

@@ -26,6 +26,15 @@ collections:
           - { label: "พิกัด GPS ละติจูด", name: "gps_lat", widget: "number" }
           - { label: "พิกัด GPS ลองจิจูด", name: "gps_lng", widget: "number" }
           - { label: "ลิงก์ Facebook", name: "facebook_url", widget: "string" }
+          - { label: "ข้อความแบนเนอร์ประกาศด้านบนเว็บ (เว้นว่าง = ไม่แสดง)", name: "banner_text", widget: "string", required: false }
+          - { label: "หัวข้อใหญ่หน้าแรก บรรทัดที่ 1", name: "hero_title_line1", widget: "string" }
+          - { label: "หัวข้อใหญ่หน้าแรก บรรทัดที่ 2 (ตัวเน้นสีทอง)", name: "hero_title_line2", widget: "string" }
+          - { label: "คำโปรยใต้หัวข้อหน้าแรก", name: "hero_subtitle", widget: "text" }
+          - { label: "รูปหน้าแรก (Hero)", name: "hero_image", widget: "image" }
+          - { label: "หัวข้อใหญ่หน้าเกี่ยวกับเรา", name: "about_title", widget: "string" }
+          - { label: "เกี่ยวกับเรา พารากราฟที่ 1", name: "about_p1", widget: "text" }
+          - { label: "เกี่ยวกับเรา พารากราฟที่ 2", name: "about_p2", widget: "text" }
+          - { label: "รูปหน้าเกี่ยวกับเรา", name: "about_image", widget: "image" }
 
   - name: "menu"
     label: "เมนูอาหาร"
@@ -34,12 +43,35 @@ collections:
         label: "รายการเมนูทั้งหมด"
         name: "menu"
         fields:
-          - label: "รายการเมนู"
+          - label: "รายการเมนู (ลากรูปแถบเพื่อเรียงลำดับ)"
             name: "items"
             widget: "list"
+            summary: "{{fields.name}} — ฿{{fields.price}}"
             fields:
               - { label: "รหัสเมนู (ห้ามซ้ำ, ภาษาอังกฤษ)", name: "id", widget: "string" }
               - { label: "ชื่อเมนู", name: "name", widget: "string" }
               - { label: "คำโปรย", name: "desc", widget: "text" }
               - { label: "ราคา (เช่น 60 หรือ 280/กก.)", name: "price", widget: "string" }
               - { label: "รูปเมนู", name: "image", widget: "image" }
+              - { label: "หมวดหมู่", name: "category", widget: "string", required: false, hint: "เช่น เมนูข้าว, ซื้อกลับบ้าน" }
+              - { label: "วิดีโอเมนู (ลิงก์ YouTube หรือไฟล์วิดีโอ)", name: "video", widget: "string", required: false }
+              - { label: "ป้าย เมนูแนะนำ / เมนูต้องลอง", name: "featured", widget: "boolean", default: false }
+
+  - name: "blog"
+    label: "บทความ SEO / GEO"
+    folder: "data/blog"
+    create: true
+    slug: "{{fields.slug}}"
+    extension: "md"
+    format: "frontmatter"
+    summary: "{{title}} — {{fields.published}}"
+    fields:
+      - { label: "หัวข้อบทความ", name: "title", widget: "string" }
+      - { label: "Meta description (สำหรับ SEO)", name: "meta_description", widget: "text" }
+      - { label: "Slug (ภาษาอังกฤษ, ห้ามซ้ำ, ใช้เป็นชื่อไฟล์ URL)", name: "slug", widget: "string", hint: "เช่น khao-moo-dang-tips — ห้ามใส่เว้นวรรค" }
+      - { label: "หมวดหมู่ / ป้ายแท็ก", name: "category", widget: "string", hint: "เช่น แนะนำร้าน, เบื้องหลังครัว" }
+      - { label: "รูปปกบทความ", name: "cover_image", widget: "image" }
+      - { label: "วันที่เผยแพร่", name: "date", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
+      - { label: "ปักด้านบนสุดของหน้าบทความ", name: "pinned", widget: "boolean", default: false }
+      - { label: "เผยแพร่แล้ว (ปิด = ซ่อนจากเว็บ ยังไม่ลบ)", name: "published", widget: "boolean", default: true }
+      - { label: "เนื้อหาบทความ", name: "body", widget: "markdown", buttons: ["bold", "italic", "link", "heading-two", "heading-three", "bulleted-list"], editor_components: [] }

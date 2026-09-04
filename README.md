@@ -5,11 +5,28 @@
 ## เนื้อหาที่ติดตั้งแล้ว
 
 - ดีไซน์เดิมจากไฟล์ต้นฉบับ: โทนไวน์/ทอง/ครีม, Hero ภาษาไทย และหัวข้อเลขไทย ๐๑–๐๕
-- เมนูจริง 6 รายการ พร้อมภาพอาหารที่เลือกจากภาพที่ผู้ใช้ให้มา
-- SEO/GEO: canonical, Open Graph, Twitter Card, Restaurant/FAQ/Menu/BlogPosting/Breadcrumb schema, `robots.txt` และ `sitemap.xml`
-- Decap CMS ที่ `/admin/` สำหรับแก้ข้อมูลร้านและเมนูใน GitHub
+- เมนูจริง 6 รายการ พร้อมภาพอาหารที่เลือกจากภาพที่ผู้ใช้ให้มา รองรับหมวดหมู่ วิดีโอ และป้าย "เมนูแนะนำ"
+- SEO/GEO: canonical, Open Graph, Twitter Card, Restaurant/FAQ/Menu/BlogPosting/Breadcrumb schema (ฝังแบบ static ทุกหน้า ไม่พึ่ง JavaScript), `robots.txt` (list AI crawler ชัดเจน: GPTBot, ClaudeBot, PerplexityBot ฯลฯ) และ `sitemap.xml`
+- Decap CMS ที่ `/admin/` สำหรับแก้ข้อมูลร้าน, แบนเนอร์ประกาศ, Hero หน้าแรก/เกี่ยวกับเรา, เมนู และ**เขียน/แก้/ลบบทความบล็อกได้เต็มรูปแบบ**
+- `scripts/build-blog.js` — สร้างหน้าบทความ HTML, `blog/index.html` และ `sitemap.xml` ใหม่จากไฟล์ markdown ใน `site/data/blog/` (ไม่ต้องติดตั้ง dependency เพิ่ม ใช้ Node.js เปล่าๆ)
+- `.github/workflows/build-deploy.yml` — เมื่อมีการบันทึกจากหน้า `/admin` (เท่ากับ commit เข้า `main`) ระบบจะรัน build script และ deploy ขึ้น Cloudflare ให้อัตโนมัติ
 
-URL ปัจจุบันใน canonical และ sitemap คือ `https://kimngek-menu.wanat-n.workers.dev/` หากเปลี่ยนเป็น custom domain ให้ปรับ URL เหล่านี้พร้อมกัน
+URL ปัจจุบันใน canonical และ sitemap คือ `https://kimngek-menu.wanat-n.workers.dev/` หากเปลี่ยนเป็น custom domain ให้ปรับ URL เหล่านี้พร้อมกัน (แก้ค่า `SITE_URL` ใน `scripts/build-blog.js` ด้วย)
+
+## เปิดใช้งานระบบ deploy อัตโนมัติ (แนะนำ)
+
+เพื่อให้แก้บทความ/เมนู/ข้อมูลร้านจากหน้า `/admin` แล้วเว็บอัปเดตเองโดยไม่ต้องรันคำสั่งเอง ต้องเพิ่ม secret 2 ตัวใน GitHub repo (Settings → Secrets and variables → Actions):
+
+1. `CLOUDFLARE_API_TOKEN` — สร้างที่ Cloudflare dashboard → My Profile → API Tokens → Create Token → เลือกสิทธิ์ "Edit Cloudflare Workers"
+2. `CLOUDFLARE_ACCOUNT_ID` — ดูที่มุมขวาของหน้า Cloudflare dashboard (Workers & Pages)
+
+หลังตั้ง secret แล้ว ทุกครั้งที่บันทึกจากหน้าแอดมิน GitHub Actions จะ build บทความใหม่และ deploy ขึ้น Cloudflare ให้อัตโนมัติภายในไม่กี่นาที ไม่ต้องรัน `wrangler deploy` เองอีก
+
+หากยังไม่ตั้ง secret ไว้ ให้รันด้วยมือแทน:
+```
+node scripts/build-blog.js
+cd site && npx wrangler deploy --name kimngek-menu
+```
 
 ## Deploy บน Cloudflare Workers
 
