@@ -24,9 +24,26 @@ collections:
           - { label: "เวลาเปิด", name: "hours_open", widget: "string" }
           - { label: "เวลาปิด", name: "hours_close", widget: "string" }
           - { label: "ข้อความเวลาเปิด-ปิด (แสดงผล)", name: "hours_display", widget: "string" }
+          - label: "วันที่เปิดร้าน (ติ๊กเฉพาะวันที่เปิดขายจริง)"
+            name: "open_days"
+            widget: "select"
+            multiple: true
+            options:
+              - { label: "จันทร์", value: "Monday" }
+              - { label: "อังคาร", value: "Tuesday" }
+              - { label: "พุธ", value: "Wednesday" }
+              - { label: "พฤหัสบดี", value: "Thursday" }
+              - { label: "ศุกร์", value: "Friday" }
+              - { label: "เสาร์", value: "Saturday" }
+              - { label: "อาทิตย์", value: "Sunday" }
+            default: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+            hint: "ใช้คู่กับช่อง 'ข้อความเวลาเปิด-ปิด' ด้านบน — ติ๊กวันที่ปิดออกถ้าร้านหยุดวันนั้น ระบบจะอัปเดต footer, FAQ และ schema ให้ตรงกันอัตโนมัติ"
           - { label: "พิกัด GPS ละติจูด", name: "gps_lat", widget: "number" }
           - { label: "พิกัด GPS ลองจิจูด", name: "gps_lng", widget: "number" }
           - { label: "ลิงก์ Facebook", name: "facebook_url", widget: "string" }
+          - { label: "ลิงก์ Instagram (เว้นว่างได้ถ้าไม่มี)", name: "instagram_url", widget: "string", required: false }
+          - { label: "ลิงก์ TikTok (เว้นว่างได้ถ้าไม่มี)", name: "tiktok_url", widget: "string", required: false }
+          - { label: "ลิงก์ Google Business Profile (เว้นว่างได้ถ้าไม่มี)", name: "gbp_url", widget: "string", required: false }
 
       - file: "site/data/banner.json"
         label: "📢 แบนเนอร์ประกาศ"

@@ -1,12 +1,16 @@
 {
-  "hours_close": "14:00",
-  "gps_lat": 14.4759387,
   "name": "กิมเง็ก ข้าวหมูแดงเกรดพิธี",
-  "gps_lng": 100.1148976,
-  "phone_display": "085-529-8799",
-  "hours_display": "เปิด 07:30 – 14:00 น. (ปิดจันทร์)",
   "address": "21/9 ถนนขุนช้าง ตำบลท่าพี่เลี้ยง อำเภอเมืองสุพรรณบุรี จังหวัดสุพรรณบุรี 72000",
-  "facebook_url": "https://www.facebook.com/kimngekredpork",
   "phone_raw": "0855298799",
-  "hours_open": "07:30"
+  "phone_display": "085-529-8799",
+  "hours_open": "07:30",
+  "hours_close": "14:00",
+  "hours_display": "เปิดทุกวัน 07:30 – 14:00 น.",
+  "open_days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+  "gps_lat": 14.4759387,
+  "gps_lng": 100.1148976,
+  "facebook_url": "https://www.facebook.com/kimngekredpork",
+  "instagram_url": "",
+  "tiktok_url": "",
+  "gbp_url": ""
 }

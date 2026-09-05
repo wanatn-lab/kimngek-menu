@@ -99,6 +99,69 @@
     }
   }
 
+  var SITE_URL = "https://kimngek-khaomoodang.wanat-n.workers.dev";
+  var ALL_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+  // สร้าง Restaurant schema จากข้อมูล site.json สดๆ แล้วเขียนทับก้อน JSON-LD ที่ฝังไว้ในหน้า
+  // เพื่อให้เวลาเปิด-ปิด, sameAs และข้อมูลร้านตรงกับที่ตั้งค่าไว้ในหน้าแอดมินเสมอ
+  // ไม่ต้องแก้ไฟล์ index.html เองทุกครั้งที่เปลี่ยนเวลาเปิด-ปิดหรือลิงก์โซเชียล
+  function buildRestaurantSchema(site) {
+    var days = Array.isArray(site.open_days) && site.open_days.length ? site.open_days : ALL_DAYS;
+    return {
+      "@context": "https://schema.org",
+      "@type": "Restaurant",
+      "@id": SITE_URL + "/#restaurant",
+      "name": site.name,
+      "image": SITE_URL + "/images/og-kimngek.jpg",
+      "logo": SITE_URL + "/images/og-kimngek.jpg",
+      "servesCuisine": "ข้าวหมูแดง / อาหารไทย-จีน",
+      "priceRange": "฿฿",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "21/9 ถนนขุนช้าง ตำบลท่าพี่เลี้ยง",
+        "addressLocality": "อำเภอเมืองสุพรรณบุรี",
+        "addressRegion": "สุพรรณบุรี",
+        "postalCode": "72000",
+        "addressCountry": "TH"
+      },
+      "geo": { "@type": "GeoCoordinates", "latitude": site.gps_lat, "longitude": site.gps_lng },
+      "telephone": "+66" + String(site.phone_raw || "").replace(/^0/, ""),
+      "url": SITE_URL + "/",
+      "sameAs": [site.facebook_url, site.instagram_url, site.tiktok_url, site.gbp_url].filter(Boolean),
+      "hasMap": "https://share.google/WnN6dRmrsV8P9isHG",
+      "openingHoursSpecification": [{
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": days,
+        "opens": site.hours_open,
+        "closes": site.hours_close
+      }]
+    };
+  }
+
+  function injectRestaurantSchema(site) {
+    var existing = document.getElementById("restaurant-schema");
+    if (existing) existing.textContent = JSON.stringify(buildRestaurantSchema(site));
+  }
+
+  // คำตอบ FAQ ข้อแรก (เวลาเปิด-ปิด) ต้องอ้างอิงจาก hours_display เดียวกับที่แสดงบนหน้าเว็บ
+  // ข้ออื่นเป็นข้อมูลคงที่ไม่เกี่ยวกับเวลาเปิด-ปิด
+  function injectFaqSchema(site) {
+    var existing = document.getElementById("faq-schema");
+    if (!existing) return;
+    var hoursText = (site.hours_display || "") + " วันหยุดหมูแดงมักหมดก่อนเวลาปิด แนะนำโทรถามก่อนที่ " + (site.phone_display || "");
+    var schema = {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "ร้านเปิดกี่โมง ปิดกี่โมง", "acceptedAnswer": { "@type": "Answer", "text": hoursText } },
+        { "@type": "Question", "name": "มีที่จอดรถไหม", "acceptedAnswer": { "@type": "Answer", "text": "มีที่จอดหน้าร้านริมถนนขุนช้าง และจอดเพิ่มได้ข้างร้าน ช่วง 11:00–13:00 น. จะแน่นที่สุด" } },
+        { "@type": "Question", "name": "สั่งกลับบ้านได้ไหม", "acceptedAnswer": { "@type": "Answer", "text": "ได้ทุกเมนู แยกซอสและน้ำซุปให้ หากสั่งจำนวนมากโทรแจ้งล่วงหน้าอย่างน้อย 1 ชั่วโมง" } },
+        { "@type": "Question", "name": "จองโต๊ะล่วงหน้าได้ไหม", "acceptedAnswer": { "@type": "Answer", "text": "รับจองสำหรับกลุ่ม 6 คนขึ้นไป โทรหรือทักไลน์ " + (site.phone_display || "") + " ล่วงหน้า 1 วัน" } }
+      ]
+    };
+    existing.textContent = JSON.stringify(schema);
+  }
+
   function fetchJson(url) {
     return fetch(url).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
   }
@@ -116,6 +179,10 @@
     var menuData = results[4];
     var items = menuData && Array.isArray(menuData.items) ? menuData.items : null;
     if (results[0] || results[1] || results[2] || results[3]) applySiteData(site);
+    if (results[0]) {
+      injectRestaurantSchema(site);
+      injectFaqSchema(site);
+    }
     if (items) {
       renderMenu(items);
       injectMenuSchema(items);

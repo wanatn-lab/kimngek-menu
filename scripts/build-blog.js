@@ -110,8 +110,10 @@ function restaurantSchema(site) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Restaurant',
+    '@id': SITE_URL + '/#restaurant',
     name: site.name,
     image: SITE_URL + '/images/og-kimngek.jpg',
+    logo: SITE_URL + '/images/og-kimngek.jpg',
     servesCuisine: 'ข้าวหมูแดง / อาหารไทย-จีน',
     priceRange: '฿฿',
     address: {
@@ -125,11 +127,11 @@ function restaurantSchema(site) {
     geo: { '@type': 'GeoCoordinates', latitude: site.gps_lat, longitude: site.gps_lng },
     telephone: '+66' + String(site.phone_raw || '').replace(/^0/, ''),
     url: SITE_URL + '/',
-    sameAs: [site.facebook_url].filter(Boolean),
+    sameAs: [site.facebook_url, site.instagram_url, site.tiktok_url, site.gbp_url].filter(Boolean),
     hasMap: 'https://share.google/WnN6dRmrsV8P9isHG',
     openingHoursSpecification: [{
       '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      dayOfWeek: site.open_days || ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
       opens: site.hours_open,
       closes: site.hours_close
     }]
@@ -183,7 +185,7 @@ function headerFooter(site) {
   const header =
     '<header class="hdr">\n' +
     '  <div class="hdr-in">\n' +
-    '    <a class="brand" href="../index.html">\n' +
+    '    <a class="brand" href="/">\n' +
     '      <span class="seal">ก</span>\n' +
     '      <span style="display:flex;flex-direction:column;min-width:0">\n' +
     '        <span class="bname">กิมเง็ก</span>\n' +
@@ -191,21 +193,21 @@ function headerFooter(site) {
     '      </span>\n' +
     '    </a>\n' +
     '    <nav class="nav-d">\n' +
-    '      <a href="../index.html#menu">เมนูอาหาร</a>\n' +
-    '      <a href="../index.html#about">เกี่ยวกับเรา</a>\n' +
-    '      <a href="../blog/index.html">บทความ</a>\n' +
-    '      <a href="../index.html#contact">แผนที่ &amp; ติดต่อ</a>\n' +
+    '      <a href="/#menu">เมนูอาหาร</a>\n' +
+    '      <a href="/#about">เกี่ยวกับเรา</a>\n' +
+    '      <a href="/blog/">บทความ</a>\n' +
+    '      <a href="/#contact">แผนที่ &amp; ติดต่อ</a>\n' +
     '    </nav>\n' +
     '    <a class="btn-call" href="tel:' + escapeHtml(site.phone_raw) + '">📞 โทรสั่ง</a>\n' +
     '    <button class="burger" id="burger" aria-label="เปิดเมนู" aria-expanded="false">☰</button>\n' +
     '  </div>\n' +
     '  <div class="nav-m" id="navm">\n' +
     '    <nav>\n' +
-    '      <a href="../index.html#menu">เมนูอาหาร</a>\n' +
-    '      <a href="../index.html#about">เกี่ยวกับเรา</a>\n' +
-    '      <a href="../blog/index.html">บทความ</a>\n' +
-    '      <a href="../index.html#faq">คำถามที่พบบ่อย</a>\n' +
-    '      <a href="../index.html#contact">แผนที่ &amp; ติดต่อ</a>\n' +
+    '      <a href="/#menu">เมนูอาหาร</a>\n' +
+    '      <a href="/#about">เกี่ยวกับเรา</a>\n' +
+    '      <a href="/blog/">บทความ</a>\n' +
+    '      <a href="/#faq">คำถามที่พบบ่อย</a>\n' +
+    '      <a href="/#contact">แผนที่ &amp; ติดต่อ</a>\n' +
     '    </nav>\n' +
     '  </div>\n' +
     '</header>';
@@ -213,13 +215,13 @@ function headerFooter(site) {
     '<footer>\n' +
     '  <div class="wrap" style="padding:0">\n' +
     '    <div class="ft">' + escapeHtml(site.name) + '</div>\n' +
-    '    <p class="sl">รมควันข้ามคืน ราดซอสสูตรเฉพาะ เสิร์ฟตั้งแต่เช้าถึงบ่ายทุกวัน</p>\n' +
+    '    <p class="sl">รมควันข้ามคืน ราดซอสสูตรเฉพาะ · ' + escapeHtml(site.hours_display) + '</p>\n' +
     '    <nav>\n' +
-    '      <a href="../index.html#menu">เมนูอาหาร</a>\n' +
-    '      <a href="../index.html#about">เกี่ยวกับเรา</a>\n' +
-    '      <a href="../blog/index.html">บทความ</a>\n' +
-    '      <a href="../index.html#faq">คำถามที่พบบ่อย</a>\n' +
-    '      <a href="../index.html#contact">แผนที่ &amp; ติดต่อ</a>\n' +
+    '      <a href="/#menu">เมนูอาหาร</a>\n' +
+    '      <a href="/#about">เกี่ยวกับเรา</a>\n' +
+    '      <a href="/blog/">บทความ</a>\n' +
+    '      <a href="/#faq">คำถามที่พบบ่อย</a>\n' +
+    '      <a href="/#contact">แผนที่ &amp; ติดต่อ</a>\n' +
     '      <a href="' + escapeHtml(site.facebook_url) + '" target="_blank" rel="noopener">เฟซบุ๊ก</a>\n' +
     '    </nav>\n' +
     '    <div class="nap">\n' +
@@ -235,7 +237,7 @@ function headerFooter(site) {
 }
 
 function renderPostPage(site, post, allPosts) {
-  const url = SITE_URL + '/blog/' + post.data.slug + '.html';
+  const url = SITE_URL + '/blog/' + post.data.slug;
   const coverImage = SITE_URL + post.data.cover_image;
   const ogImage = SITE_URL + '/images/og-kimngek.jpg'; // การ์ดแชร์ใช้รูปกลางของร้าน ขนาด 1200x630 คงที่เสมอ
   const blogSchema = {
@@ -272,8 +274,8 @@ function renderPostPage(site, post, allPosts) {
     '  <h1>' + escapeHtml(post.data.title) + '</h1>\n' +
     '  <img src="..' + post.data.cover_image + '" alt="' + escapeHtml(post.data.title) + '">\n' +
     '  ' + post.bodyHtml + '\n' +
-    '  <p><a class="backlink" href="index.html">← ดูบทความทั้งหมด</a></p>\n' +
-    '  <p class="note"><a href="../index.html#menu">ดูเมนูและราคา</a> · <a href="../index.html#contact">แผนที่ &amp; ติดต่อ</a> · โทร <a href="tel:' + escapeHtml(site.phone_raw) + '">' + escapeHtml(site.phone_display) + '</a></p>\n' +
+    '  <p><a class="backlink" href="/blog/">← ดูบทความทั้งหมด</a></p>\n' +
+    '  <p class="note"><a href="/#menu">ดูเมนูและราคา</a> · <a href="/#contact">แผนที่ &amp; ติดต่อ</a> · โทร <a href="tel:' + escapeHtml(site.phone_raw) + '">' + escapeHtml(site.phone_display) + '</a></p>\n' +
     '</main>\n' + hf.footer + '\n<script src="../assets/site.js" defer></script>\n</body>\n</html>\n';
 }
 
@@ -297,7 +299,7 @@ function renderBlogIndex(site, posts) {
     extraSchemas: [breadcrumb]
   });
   const rows = posts.map(function (p) {
-    return '      <a class="brow" href="' + p.data.slug + '.html">\n' +
+    return '      <a class="brow" href="/blog/' + p.data.slug + '">\n' +
       '        <img src="..' + p.data.cover_image + '" alt="' + escapeHtml(p.data.title) + '" loading="lazy" width="74" height="74">\n' +
       '        <div style="flex:1;min-width:0"><span class="k">' + escapeHtml(p.data.category || '') + '</span><h3>' + escapeHtml(p.data.title) + '</h3></div>\n' +
       '        <span class="arw" aria-hidden="true">→</span>\n' +
@@ -317,12 +319,25 @@ function renderSitemap(posts) {
     { loc: SITE_URL + '/', changefreq: 'weekly', priority: '1.0' },
     { loc: SITE_URL + '/blog/', changefreq: 'weekly', priority: '0.7' }
   ].concat(posts.map(function (p) {
-    return { loc: SITE_URL + '/blog/' + p.data.slug + '.html', changefreq: 'monthly', priority: '0.6' };
+    return { loc: SITE_URL + '/blog/' + p.data.slug, changefreq: 'monthly', priority: '0.6' };
   }));
   const body = urls.map(function (u) {
     return '  <url><loc>' + u.loc + '</loc><lastmod>' + today + '</lastmod><changefreq>' + u.changefreq + '</changefreq><priority>' + u.priority + '</priority></url>';
   }).join('\n');
   return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + body + '\n</urlset>\n';
+}
+
+// สร้างไฟล์ _redirects เพื่อบังคับให้ URL แบบ .html เก่า redirect แบบ 301 (ถาวร)
+// ไปหา URL แบบสะอาด (ไม่มี .html) แทนที่จะปล่อยให้ Cloudflare ใช้ 307 (ชั่วคราว) อัตโนมัติ
+// - Google แนะนำให้สัญญาณ canonical/sitemap/redirect ชี้ไป URL เดียวกันแบบถาวร
+function renderRedirects(posts) {
+  const lines = [
+    '/index.html / 301',
+    '/blog/index.html /blog/ 301'
+  ].concat(posts.map(function (p) {
+    return '/blog/' + p.data.slug + '.html /blog/' + p.data.slug + ' 301';
+  }));
+  return lines.join('\n') + '\n';
 }
 
 function main() {
@@ -348,6 +363,9 @@ function main() {
 
   fs.writeFileSync(path.join(SITE, 'sitemap.xml'), renderSitemap(posts), 'utf8');
   console.log('เขียนแล้ว: site/sitemap.xml');
+
+  fs.writeFileSync(path.join(SITE, '_redirects'), renderRedirects(posts), 'utf8');
+  console.log('เขียนแล้ว: site/_redirects');
 
   console.log('เสร็จสิ้น: สร้างบทความทั้งหมด ' + posts.length + ' รายการ');
 }
