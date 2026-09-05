@@ -59,6 +59,16 @@
       "category": "เมนูทานเล่น",
       "video": "https://res.cloudinary.com/xnnzo17i/video/upload/v1788629392/kimngek-menu-videos/bjdrlracazh0qa9zgwia.mp4",
       "featured": false
+    },
+    {
+      "featured": false,
+      "id": "Oil-chilli",
+      "name": "น้ำมันพริก",
+      "desc": "น้ำมันพริกเป็นตัวสำคัญของเมนูร้านข้าวหมูแดงกิมเง็กทุกเมนู เพราะเราออกแบบมาให้เผ็ดกลางๆ นัวร์ๆ เคี้ยวได้ ต้องลอง",
+      "category": "เมนูเครื่องเคียง",
+      "video": "https://res.cloudinary.com/xnnzo17i/video/upload/v1788630326/kimngek-menu-videos/acsiabt25wkihpv7i0tu.mp4",
+      "image": "/images/a-meticulously-prepared-roasted-pork-rice-dish-with-crispy-pork-without-chinese-sausage-so-you-can-fully-enjoy-the-flavors-of-both-the-roasted-pork-and-the-crispy-pork..png",
+      "price": "20"
     }
   ]
 }
