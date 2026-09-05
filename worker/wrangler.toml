@@ -13,7 +13,7 @@ GITHUB_REPO_PRIVATE = "0"
 # Cloud name and API key aren't sensitive on their own - only the API secret
 # (set separately below) needs to stay private.
 CLOUDINARY_CLOUD_NAME = "xnnzo17i"
-CLOUDINARY_API_KEY = "553872251746624"
+CLOUDINARY_API_KEY = "391736913246214"
 
 [secrets]
 required = ["GITHUB_OAUTH_ID", "GITHUB_OAUTH_SECRET", "CLOUDINARY_API_SECRET"]
