@@ -17,7 +17,7 @@
       "price": "99",
       "image": "/images/khao-moo-dang-egg.jpg",
       "category": "เมนูข้าว",
-      "video": "",
+      "video": "https://res.cloudinary.com/xnnzo17i/video/upload/v1788629368/kimngek-menu-videos/nkiq2eayt70oa61b39td.mp4",
       "featured": false
     },
     {
@@ -57,7 +57,7 @@
       "price": "180",
       "image": "/images/moo-dang-kilo.jpg",
       "category": "เมนูทานเล่น",
-      "video": "",
+      "video": "https://res.cloudinary.com/xnnzo17i/video/upload/v1788629392/kimngek-menu-videos/bjdrlracazh0qa9zgwia.mp4",
       "featured": false
     }
   ]
