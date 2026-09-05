@@ -82,7 +82,7 @@ async function handleSeoAssist(request, env) {
   try {
     parsed = extractJsonObject(rawText);
   } catch (e) {
-    return new Response(JSON.stringify({ error: "AI ตอบกลับมาในรูปแบบที่อ่านไม่ได้ ลองใหม่อีกครั้ง" }), { status: 502, headers });
+    return new Response(JSON.stringify({ error: "AI ตอบกลับมาในรูปแบบที่อ่านไม่ได้ ลองใหม่อีกครั้ง", debugRaw: rawText.slice(0, 4000) }), { status: 502, headers });
   }
 
   return new Response(
