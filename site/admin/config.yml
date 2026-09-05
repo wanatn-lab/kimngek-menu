@@ -74,7 +74,7 @@ collections:
               - { label: "ราคา (เช่น 60 หรือ 280/กก.)", name: "price", widget: "string" }
               - { label: "รูปเมนู (ระบบจะย่อ/บีบอัดให้อัตโนมัติ)", name: "image", widget: "compressed-image" }
               - { label: "หมวดหมู่", name: "category", widget: "string", required: false, hint: "เช่น เมนูข้าว, ซื้อกลับบ้าน" }
-              - { label: "วิดีโอเมนู (ลิงก์ YouTube หรือไฟล์วิดีโอ)", name: "video", widget: "string", required: false }
+              - { label: "วิดีโอเมนู (อัปโหลดไฟล์ MP4 ที่บีบอัดแล้ว แนะนำไม่เกิน 10MB และไม่เกิน 15 วินาที)", name: "video", widget: "file", required: false, hint: "กดเลือกไฟล์ได้เลยเหมือนอัปโหลดรูป — บีบอัดไฟล์มาก่อนอัปโหลดด้วยนะครับ" }
               - { label: "ป้าย เมนูแนะนำ / เมนูต้องลอง", name: "featured", widget: "boolean", default: false }
 
   - name: "blog"
