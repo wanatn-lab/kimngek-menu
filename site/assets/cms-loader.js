@@ -54,7 +54,7 @@
       var featured = item.featured ? '<span class="badge-star">⭐ เมนูแนะนำ</span>' : '';
       var video = item.video ? '<a class="video-link" href="' + escapeHtml(item.video) + '" target="_blank" rel="noopener">▶ ดูวิดีโอเมนู</a>' : '';
       return "" +
-        '<article class="row">' +
+        '<article class="row" data-image="' + image + '" data-name="' + name + '" data-price="' + price + '" data-desc="' + desc + '" data-category="' + escapeHtml(item.category || "") + '" data-featured="' + (item.featured ? "1" : "") + '" data-video="' + escapeHtml(item.video || "") + '">' +
         '<img class="thumb" src="' + image + '" alt="' + name + ' — ข้าวหมูแดงเกรดพิธี ร้านกิมเง็ก สุพรรณบุรี" loading="lazy" width="78" height="78">' +
         '<div class="body">' +
         '<div class="priceline"><h3>' + name + '</h3><span class="dots"></span><span class="price">฿' + price + '</span></div>' +
