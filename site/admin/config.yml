@@ -43,7 +43,7 @@ collections:
           - { label: "หัวข้อใหญ่ บรรทัดที่ 1", name: "hero_title_line1", widget: "string" }
           - { label: "หัวข้อใหญ่ บรรทัดที่ 2 (ตัวเน้นสีทอง)", name: "hero_title_line2", widget: "string" }
           - { label: "คำโปรยใต้หัวข้อ", name: "hero_subtitle", widget: "text" }
-          - { label: "รูปหน้าแรก (ระบบจะย่อ/บีบอัดให้อัตโนมัติ)", name: "hero_image", widget: "compressed-image" }
+          - { label: "รูปหน้าแรก", name: "hero_image", widget: "image", hint: "แนะนำย่อรูปเป็น 1600x1200 พิกเซลก่อนอัปโหลด จะได้ไฟล์ไม่หนักเกินไป" }
 
       - file: "site/data/about.json"
         label: "ℹ️ เกี่ยวกับเรา"
@@ -53,7 +53,7 @@ collections:
           - { label: "หัวข้อใหญ่", name: "about_title", widget: "string" }
           - { label: "พารากราฟที่ 1", name: "about_p1", widget: "text" }
           - { label: "พารากราฟที่ 2", name: "about_p2", widget: "text" }
-          - { label: "รูปประกอบ (ระบบจะย่อ/บีบอัดให้อัตโนมัติ)", name: "about_image", widget: "compressed-image" }
+          - { label: "รูปประกอบ", name: "about_image", widget: "image", hint: "แนะนำย่อรูปเป็น 1600x1200 พิกเซลก่อนอัปโหลด จะได้ไฟล์ไม่หนักเกินไป" }
 
   - name: "menu"
     label: "🍽️ เมนูอาหาร"
@@ -72,7 +72,7 @@ collections:
               - { label: "ชื่อเมนู", name: "name", widget: "string" }
               - { label: "คำโปรย", name: "desc", widget: "text" }
               - { label: "ราคา (เช่น 60 หรือ 280/กก.)", name: "price", widget: "string" }
-              - { label: "รูปเมนู (ระบบจะย่อ/บีบอัดให้อัตโนมัติ)", name: "image", widget: "compressed-image" }
+              - { label: "รูปเมนู", name: "image", widget: "image", hint: "แนะนำย่อรูปเป็น 1200x1200 พิกเซลก่อนอัปโหลด จะได้ไฟล์ไม่หนักเกินไป" }
               - { label: "หมวดหมู่", name: "category", widget: "string", required: false, hint: "เช่น เมนูข้าว, ซื้อกลับบ้าน" }
               - { label: "วิดีโอเมนู (อัปโหลดไฟล์ MP4 ที่บีบอัดแล้ว แนะนำไม่เกิน 10MB และไม่เกิน 15 วินาที)", name: "video", widget: "file", required: false, hint: "กดเลือกไฟล์ได้เลยเหมือนอัปโหลดรูป — บีบอัดไฟล์มาก่อนอัปโหลดด้วยนะครับ" }
               - { label: "ป้าย เมนูแนะนำ / เมนูต้องลอง", name: "featured", widget: "boolean", default: false }
@@ -90,7 +90,7 @@ collections:
       - { label: "Meta description (สำหรับ SEO)", name: "meta_description", widget: "text" }
       - { label: "Slug (ภาษาอังกฤษ, ห้ามซ้ำ, ใช้เป็นชื่อไฟล์ URL)", name: "slug", widget: "string", hint: "เช่น khao-moo-dang-tips — ห้ามใส่เว้นวรรค" }
       - { label: "หมวดหมู่ / ป้ายแท็ก", name: "category", widget: "string", hint: "เช่น แนะนำร้าน, เบื้องหลังครัว" }
-      - { label: "รูปปกบทความ (ระบบจะย่อ/บีบอัดให้อัตโนมัติ)", name: "cover_image", widget: "compressed-image" }
+      - { label: "รูปปกบทความ", name: "cover_image", widget: "image", hint: "แนะนำย่อรูปเป็น 1600x1200 พิกเซลก่อนอัปโหลด จะได้ไฟล์ไม่หนักเกินไป" }
       - { label: "วันที่เผยแพร่", name: "date", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
       - { label: "ปักด้านบนสุดของหน้าบทความ", name: "pinned", widget: "boolean", default: false }
       - { label: "เผยแพร่แล้ว (ปิด = ซ่อนจากเว็บ ยังไม่ลบ)", name: "published", widget: "boolean", default: true }
