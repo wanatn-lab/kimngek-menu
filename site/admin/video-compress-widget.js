@@ -80,7 +80,14 @@
 
   function compressVideo(file, onProgress) {
     return loadFFmpeg(onProgress).then(function (ff) {
-      if (onProgress) onProgress('กำลังบีบอัดวิดีโอ... (อาจใช้เวลา 10-60 วินาที)');
+      if (onProgress) onProgress('กำลังบีบอัดวิดีโอ... 0%');
+      var progressHandler = function (data) {
+        var pct = Math.round((data && data.progress ? data.progress : 0) * 100);
+        if (pct < 0) pct = 0;
+        if (pct > 100) pct = 100;
+        if (onProgress) onProgress('กำลังบีบอัดวิดีโอ... ' + pct + '%');
+      };
+      ff.on('progress', progressHandler);
       return file.arrayBuffer().then(function (buf) {
         var stamp = Date.now();
         var inputName = 'in_' + stamp + '.mp4';
@@ -102,6 +109,7 @@
           })
           .then(function () { return ff.readFile(outputName); })
           .then(function (data) {
+            try { ff.off('progress', progressHandler); } catch (e) {}
             try { ff.deleteFile(inputName); } catch (e) {}
             try { ff.deleteFile(outputName); } catch (e) {}
             var blob = new Blob([data.buffer], { type: 'video/mp4' });
@@ -111,16 +119,34 @@
     });
   }
 
-  function uploadToCloudinary(blob) {
-    return fetch(UPLOAD_URL, {
-      method: 'POST',
-      headers: { 'content-type': blob.type || 'video/mp4' },
-      body: blob,
-    }).then(function (res) {
-      return res.json().then(function (json) {
-        if (!res.ok) throw new Error(json && json.error ? json.error : 'อัปโหลดวิดีโอไม่สำเร็จ');
-        return json.url;
-      });
+  function uploadToCloudinary(blob, onProgress) {
+    return new Promise(function (resolve, reject) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', UPLOAD_URL, true);
+      xhr.setRequestHeader('content-type', blob.type || 'video/mp4');
+      xhr.upload.onprogress = function (e) {
+        if (!onProgress || !e.lengthComputable) return;
+        var pct = Math.round((e.loaded / e.total) * 100);
+        onProgress('กำลังอัปโหลด... ' + pct + '%');
+      };
+      xhr.onload = function () {
+        var json;
+        try {
+          json = JSON.parse(xhr.responseText);
+        } catch (e) {
+          reject(new Error('เซิร์ฟเวอร์ตอบกลับมาในรูปแบบที่อ่านไม่ได้'));
+          return;
+        }
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve(json.url);
+        } else {
+          reject(new Error((json && json.error) || 'อัปโหลดวิดีโอไม่สำเร็จ'));
+        }
+      };
+      xhr.onerror = function () {
+        reject(new Error('อัปโหลดวิดีโอไม่สำเร็จ (เช็คอินเทอร์เน็ต)'));
+      };
+      xhr.send(blob);
     });
   }
 
@@ -165,13 +191,16 @@
           return file;
         });
       } else {
-        this.setState({ status: 'กำลังอัปโหลด...' });
+        this.setState({ status: 'กำลังอัปโหลด... 0%' });
         prepared = Promise.resolve(file);
       }
 
       prepared
         .then(function (blob) {
-          return uploadToCloudinary(blob);
+          self.setState({ status: 'กำลังอัปโหลด... 0%' });
+          return uploadToCloudinary(blob, function (msg) {
+            self.setState({ status: msg });
+          });
         })
         .then(function (url) {
           self.setState({ status: 'อัปโหลดสำเร็จ' });
