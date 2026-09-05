@@ -173,6 +173,95 @@ async function handleSeoAssist(request, env) {
   );
 }
 
+async function handleOrganizeArticle(request, env) {
+  const origin = request.headers.get("origin") || "";
+  const headers = { ...corsHeaders(origin), "content-type": "application/json; charset=utf-8" };
+
+  if (request.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers });
+  }
+  if (request.method !== "POST") {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405, headers });
+  }
+  if (!env.AI) {
+    return new Response(JSON.stringify({ error: "AI binding ยังไม่ได้ตั้งค่าบน Worker นี้" }), { status: 500, headers });
+  }
+
+  let payload;
+  try {
+    payload = await request.json();
+  } catch (e) {
+    return new Response(JSON.stringify({ error: "อ่านข้อมูลที่ส่งมาไม่ได้ (ต้องเป็น JSON)" }), { status: 400, headers });
+  }
+
+  const raw = (payload && payload.raw ? String(payload.raw) : "").slice(0, 12000);
+  if (!raw.trim()) {
+    return new Response(JSON.stringify({ error: "ยังไม่มีบทความให้จัดข้อมูล" }), { status: 400, headers });
+  }
+
+  const systemPrompt =
+    "คุณเป็นผู้เชี่ยวชาญด้าน SEO และ GEO (Generative Engine Optimization) ให้กับเว็บไซต์ร้านอาหารไทยขนาดเล็ก " +
+    "ผู้ใช้จะวางบทความดิบมาทั้งก้อน (มักมีชื่อเรื่องอยู่บรรทัดแรก) หน้าที่ของคุณคือแยกและจัดข้อมูลให้ " +
+    "ตอบเป็นภาษาไทยเท่านั้น (ยกเว้น slug ที่ต้องเป็นอังกฤษ) และตอบกลับเป็น JSON ที่ถูกต้อง (valid JSON) เพียงอย่างเดียว " +
+    "ห้ามมีข้อความอื่นนอก JSON ห้ามใส่ code fence หรือคำอธิบายใดๆ นอกวงเล็บปีกกา";
+
+  const userPrompt =
+    "บทความดิบที่วางเข้ามา (อาจมีการจัดรูปแบบไม่เรียบร้อยจากการ copy-paste):\n---\n" + raw + "\n---\n\n" +
+    "กรุณาส่งกลับ JSON ที่มีคีย์ต่อไปนี้เท่านั้น:\n" +
+    '{\n' +
+    '  "title": "ชื่อเรื่องบทความ (ดึงจากบทความ หรือแต่งให้กระชับดึงดูดถ้าบทความไม่มีชื่อเรื่องชัดเจน)",\n' +
+    '  "slug": "ชื่อไฟล์ URL ภาษาอังกฤษล้วน ตัวเล็ก คั่นด้วยขีดกลาง (-) ไม่มีเว้นวรรคหรืออักขระพิเศษ แปลความหมายจากชื่อเรื่อง",\n' +
+    '  "category": "หมวดหมู่สั้นๆ ภาษาไทย 1-3 คำ เช่น แนะนำร้าน, เบื้องหลังครัว, เคล็ดลับการกิน",\n' +
+    '  "meta_description": "คำอธิบายสั้น 150-160 ตัวอักษร ดึงดูดให้คนคลิก เหมาะกับ SEO",\n' +
+    '  "cleaned_body": "เนื้อหาบทความเดิม (ไม่รวมชื่อเรื่อง) จัดรูปแบบใหม่เป็น Markdown ที่สะอาด มีหัวข้อย่อย (##, ###) และย่อหน้าที่เหมาะสม ไม่เพิ่มเนื้อหาใหม่ ไม่ตัดเนื้อหาสำคัญออก",\n' +
+    '  "qna_markdown": "หัวข้อ \\"### คำถามที่พบบ่อย\\" ตามด้วยคำถาม-คำตอบ 3 ข้อที่เกี่ยวข้องกับบทความ รูปแบบ **Q: ...** ขึ้นบรรทัดใหม่ตามด้วย A: ... เว้นบรรทัดว่างคั่นแต่ละคู่ (ช่วยให้ AI อื่นๆ ดึงคำตอบไปใช้ได้ง่าย)"\n' +
+    '}';
+
+  let aiResult;
+  try {
+    aiResult = await env.AI.run(SEO_ASSIST_MODEL, {
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt }
+      ]
+    });
+  } catch (e) {
+    return new Response(JSON.stringify({ error: "เรียกใช้ AI ไม่สำเร็จ: " + (e && e.message ? e.message : "unknown") }), { status: 502, headers });
+  }
+
+  const rawText =
+    (aiResult && aiResult.response) ||
+    (aiResult && aiResult.choices && aiResult.choices[0] && aiResult.choices[0].message && aiResult.choices[0].message.content) ||
+    "";
+  let parsed;
+  try {
+    parsed = extractJsonObject(rawText);
+  } catch (e) {
+    return new Response(JSON.stringify({ error: "AI ตอบกลับมาในรูปแบบที่อ่านไม่ได้ ลองใหม่อีกครั้ง" }), { status: 502, headers });
+  }
+
+  function slugify(s) {
+    return String(s || "")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 80);
+  }
+
+  return new Response(
+    JSON.stringify({
+      title: typeof parsed.title === "string" ? parsed.title : "",
+      slug: slugify(parsed.slug || parsed.title),
+      category: typeof parsed.category === "string" ? parsed.category : "",
+      metaDescription: typeof parsed.meta_description === "string" ? parsed.meta_description : "",
+      cleanedBody: typeof parsed.cleaned_body === "string" ? parsed.cleaned_body : "",
+      qnaMarkdown: typeof parsed.qna_markdown === "string" ? parsed.qna_markdown : ""
+    }),
+    { status: 200, headers }
+  );
+}
+
 function html(body, status = 200) {
   return new Response(`<!doctype html><html lang="en"><meta charset="utf-8"><title>Decap CMS</title><body>${body}</body></html>`, {
     status,
@@ -205,6 +294,10 @@ export default {
 
     if (url.pathname === "/upload-video") {
       return handleUploadVideo(request, env);
+    }
+
+    if (url.pathname === "/organize-article") {
+      return handleOrganizeArticle(request, env);
     }
 
     const isOAuthCallback = url.pathname === "/callback" || (
