@@ -42,33 +42,38 @@
     el.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
-  function findFieldControlByLabel(root, labelIncludes) {
+  // The field's label sits a couple of DOM levels above its actual input
+  // (label -> topbar div -> the container div that holds both the topbar
+  // AND the control) - walk up from the label until we find an ancestor
+  // that actually contains an input/textarea, instead of assuming one level.
+  function findFieldContainerByLabel(root, labelIncludes) {
     var labels = root.querySelectorAll('label, [class*="ControlLabel" i]');
     for (var i = 0; i < labels.length; i++) {
       var text = (labels[i].textContent || '').trim();
       if (text.indexOf(labelIncludes) !== -1) {
-        var container = labels[i].parentElement;
-        if (container) {
-          var field = container.querySelector('input, textarea');
-          if (field) return field;
+        var node = labels[i].parentElement;
+        for (var d = 0; d < 8 && node; d++) {
+          if (node.querySelector('input, textarea')) return node;
+          node = node.parentElement;
         }
       }
     }
     return null;
   }
 
+  function findFieldControlByLabel(root, labelIncludes) {
+    var container = findFieldContainerByLabel(root, labelIncludes);
+    return container ? container.querySelector('input, textarea') : null;
+  }
+
   function findMarkdownRawTextarea(root) {
-    var labels = root.querySelectorAll('label, [class*="ControlLabel" i]');
-    for (var i = 0; i < labels.length; i++) {
-      var text = (labels[i].textContent || '').trim();
-      if (text.indexOf('เนื้อหาบทความ') !== -1) {
-        var container = labels[i].parentElement;
-        if (container) {
-          return container.querySelector('textarea[class*="markdown" i]') || container.querySelector('.CodeMirror textarea');
-        }
-      }
-    }
-    return null;
+    var container = findFieldContainerByLabel(root, 'เนื้อหาบทความ');
+    if (!container) return null;
+    return (
+      container.querySelector('textarea[class*="markdown" i]') ||
+      container.querySelector('.CodeMirror textarea') ||
+      container.querySelector('textarea')
+    );
   }
 
   var QuickPasteControl = window.createClass({
