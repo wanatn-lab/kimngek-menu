@@ -1,10 +1,11 @@
 ---
-title: "ข้าวหมูแดงสุพรรณบุรี กินที่ไหนดี"
-meta_description: "เลือกร้านข้าวหมูแดงในสุพรรณบุรีอย่างไรให้ได้จานที่ดี ดูจากหมู ซอส และข้าว พร้อมพิกัดร้านกิมเง็ก ข้าวหมูแดงเกรดพิธี ถนนขุนช้าง"
-slug: "khao-moo-dang-suphanburi-where-to-eat"
-category: "แนะนำร้าน"
-cover_image: "/images/blog-where-to-eat.jpg"
-date: "2026-09-03"
+title: ข้าวหมูแดงสุพรรณบุรี กินที่ไหนดี
+meta_description: เลือกร้านข้าวหมูแดงในสุพรรณบุรีอย่างไรให้ได้จานที่ดี ดูจากหมู
+  ซอส และข้าว พร้อมพิกัดร้านกิมเง็ก ข้าวหมูแดงเกรดพิธี ถนนขุนช้าง
+slug: khao-moo-dang-suphanburi-where-to-eat
+category: แนะนำร้าน
+cover_image: /images/photo-clarity-enhancement-.jpg.jpg
+date: 2026-09-03
 pinned: false
 published: true
 ---
