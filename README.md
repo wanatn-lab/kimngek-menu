@@ -11,7 +11,7 @@
 - `scripts/build-blog.js` — สร้างหน้าบทความ HTML, `blog/index.html` และ `sitemap.xml` ใหม่จากไฟล์ markdown ใน `site/data/blog/` (ไม่ต้องติดตั้ง dependency เพิ่ม ใช้ Node.js เปล่าๆ)
 - `.github/workflows/build-deploy.yml` — เมื่อมีการบันทึกจากหน้า `/admin` (เท่ากับ commit เข้า `main`) ระบบจะรัน build script และ deploy ขึ้น Cloudflare ให้อัตโนมัติ
 
-URL ปัจจุบันใน canonical และ sitemap คือ `https://kimngek-menu.wanat-n.workers.dev/` หากเปลี่ยนเป็น custom domain ให้ปรับ URL เหล่านี้พร้อมกัน (แก้ค่า `SITE_URL` ใน `scripts/build-blog.js` ด้วย)
+URL ปัจจุบันใน canonical และ sitemap คือ `https://kimngek-khaomoodang.wanat-n.workers.dev/` หากเปลี่ยนเป็น custom domain ให้ปรับ URL เหล่านี้พร้อมกัน (แก้ค่า `SITE_URL` ใน `scripts/build-blog.js`, `--name` ใน `.github/workflows/build-deploy.yml`, และ `name` ใน `site/wrangler.toml` ด้วย)
 
 ## เปิดใช้งานระบบ deploy อัตโนมัติ (แนะนำ)
 
