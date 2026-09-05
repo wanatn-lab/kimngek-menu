@@ -21,6 +21,16 @@
       "featured": false
     },
     {
+      "id": "khao-rum-yang",
+      "name": "ข้าวรวมหน้า",
+      "desc": "หมูแดง หมูกรอบ ใสกุนเชียงนุ่ม กลมกล่อมตามสไตล์ข้าวหมูกรอบหมูแดงบอกเลยอิ่ม",
+      "price": "90",
+      "image": "/images/khao-sam-yang.jpg",
+      "category": "เมนูข้าว",
+      "video": "",
+      "featured": true
+    },
+    {
       "id": "khao-moo-dang",
       "name": "ข้าวหมูแดง",
       "desc": "หมูแดงรมควันข้ามคืน หั่นสด ราดซอสเกรดพิธี พร้อมน้ำจิ้มและน้ำซุป",
@@ -49,16 +59,6 @@
       "category": "เมนูข้าว",
       "video": "",
       "featured": false
-    },
-    {
-      "id": "khao-sam-yang",
-      "name": "ข้าวสามอย่าง",
-      "desc": "หมูแดง หมูกรอบ ไส้กรอก ครบในจานเดียว",
-      "price": "90",
-      "image": "/images/khao-sam-yang.jpg",
-      "category": "เมนูข้าว",
-      "video": "",
-      "featured": true
     },
     {
       "id": "moo-dang-kilo",
