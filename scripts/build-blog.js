@@ -144,6 +144,9 @@ function headTags(site, opts) {
   lines.push('<title>' + escapeHtml(opts.title) + '</title>');
   lines.push('<meta name="description" content="' + escapeHtml(opts.description) + '">');
   lines.push('<link rel="canonical" href="' + opts.canonical + '">');
+  lines.push('<link rel="icon" href="/favicon.svg" type="image/svg+xml">');
+  lines.push('<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">');
+  lines.push('<link rel="apple-touch-icon" href="/favicon-180.png">');
   lines.push('<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">');
   lines.push('<meta name="theme-color" content="#57120C">');
   lines.push('<meta name="geo.placename" content="Suphan Buri">');
