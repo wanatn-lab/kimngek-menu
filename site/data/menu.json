@@ -17,7 +17,7 @@
       "price": "99",
       "image": "/images/khao-moo-dang-egg.jpg",
       "category": "เมนูข้าว",
-      "video": "",
+      "video": "/images/.gitkeep",
       "featured": false
     },
     {
