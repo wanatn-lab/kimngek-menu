@@ -35,17 +35,17 @@
       "name": "บะหมี่หมูแดงเกรดพิธี",
       "desc": "ไฮไลต์คือการใช้บะหมี่สุพรรณบุรี เส้นกลม หนา หรือเรียกกันว่าบะหมี่บ้านเราลวกแบบไม่นิ่มไป ทานกับหมูแดงและน้ำราดเข้มๆ",
       "price": "99",
-      "image": "/images/khao-moo-dang.jpg",
+      "image": "/images/3.jpg",
       "category": "เมนูเส้น",
       "video": "",
-      "featured": true
+      "featured": false
     },
     {
       "id": "keaw-se-chuan",
       "name": "เกี๊ยวกุ้งเสฉวน",
       "desc": "เกี๊ยวกุ้งเด้งๆ ใส่ซอสสไตล์เสฉวนหอม เผ็ดกำลังดี",
       "price": "80",
-      "image": "/images/khao-moo-dang-special.jpg",
+      "image": "/images/4.jpg",
       "category": "เมนูทานเล่น",
       "video": "",
       "featured": false
