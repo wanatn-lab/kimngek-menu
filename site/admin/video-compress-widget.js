@@ -1,30 +1,38 @@
 /**
  * Decap CMS custom widget: "video-compress"
  *
- * Wraps the built-in "file" widget (proven to work correctly for this
- * project's menu list — see git history around the "รูปเมนู" widget bug).
- * We do NOT touch how existing files are re-selected from the Media
- * Library — that path is left 100% untouched and keeps using Decap's own
- * working logic.
+ * Menu videos used to go through Decap's own "file" widget, which uploads
+ * new files to GitHub. That path turned out to be unreliable: Decap's
+ * GitHub backend has a long-standing, unresolved bug where files bigger
+ * than roughly 900KB can fail to upload with a generic "input was too
+ * large to process" error - well below GitHub's own real size limits, and
+ * far too small for a usable video even after heavy compression.
  *
- * The only thing this widget adds: when someone picks a BRAND NEW video
- * file from their device and it's bigger than ~6MB, it is compressed to a
- * smaller MP4 (H.264/AAC, max width 854px) entirely in the browser using
- * ffmpeg.wasm *before* Decap ever sees it, by swapping the selected file on
- * the native <input type="file"> and re-dispatching the change event. This
- * avoids re-implementing Decap's own upload/persist logic (which is what
- * caused an earlier bug) — we only ever hand Decap a smaller File object,
- * exactly like the editor picked a smaller file themselves.
+ * Video is a bad fit for a git repository anyway, so this widget instead:
+ *  1. Wraps the built-in "string" widget - the field's value is now a
+ *     plain URL (Cloudinary's), not a repo-relative path. The frontend
+ *     doesn't care: an absolute https:// URL works exactly the same as a
+ *     relative path in a <video src="...">.
+ *  2. Provides its own file picker (not Decap's Media Library - that flow
+ *     is for GitHub-hosted files and isn't used here).
+ *  3. Compresses videos over ~6MB in the browser with ffmpeg.wasm before
+ *     upload, purely to save the visitor's mobile data and speed up page
+ *     loads - Cloudinary itself comfortably handles files up to 100MB, so
+ *     this is an optimization, not a workaround for a size limit.
+ *  4. Uploads the (possibly compressed) file to the kimngek-cms-auth
+ *     Worker's /upload-video endpoint, which forwards it to Cloudinary
+ *     with a signed request and returns the resulting playable URL.
  *
  * ffmpeg.wasm (~30MB) is only downloaded the first time someone actually
- * picks a large video in a given admin session — it is never loaded just
- * from opening the admin panel.
+ * picks a large video in a given admin session - never just from opening
+ * the admin panel.
  */
 (function () {
   if (!window.CMS || !window.h || !window.createClass) return;
 
+  var UPLOAD_URL = 'https://kimngek-cms-auth.wanat-n.workers.dev/upload-video';
   var MAX_PASSTHROUGH_BYTES = 6 * 1024 * 1024; // ~6MB: small enough, skip compression
-  var MAX_WIDTH = 854; // downscale target
+  var MAX_WIDTH = 854; // downscale target for compression
 
   var ffmpegLoadPromise = null;
 
@@ -97,99 +105,130 @@
             try { ff.deleteFile(inputName); } catch (e) {}
             try { ff.deleteFile(outputName); } catch (e) {}
             var blob = new Blob([data.buffer], { type: 'video/mp4' });
-            var baseName = file.name.replace(/\.[^.]+$/, '');
-            return new File([blob], baseName + '-compressed.mp4', { type: 'video/mp4' });
+            return blob;
           });
       });
     });
   }
 
-  var OrigWidget = window.CMS.getWidget('file');
+  function uploadToCloudinary(blob) {
+    return fetch(UPLOAD_URL, {
+      method: 'POST',
+      headers: { 'content-type': blob.type || 'video/mp4' },
+      body: blob,
+    }).then(function (res) {
+      return res.json().then(function (json) {
+        if (!res.ok) throw new Error(json && json.error ? json.error : 'อัปโหลดวิดีโอไม่สำเร็จ');
+        return json.url;
+      });
+    });
+  }
+
+  var OrigWidget = window.CMS.getWidget('string');
   var OrigControl = OrigWidget.control;
   var OrigPreview = OrigWidget.preview;
 
-  var VideoCompressControl = window.createClass({
+  var VideoUploadControl = window.createClass({
     getInitialState: function () {
       return { status: '' };
     },
-    captureRef: function (el) {
-      this.containerEl = el;
-      this.attachInterceptor();
-    },
-    attachInterceptor: function () {
-      if (!this.containerEl) return;
-      var input = this.containerEl.querySelector('input[type="file"]');
-      if (!input || input.__videoCompressHooked) return;
-      input.__videoCompressHooked = true;
-      input.addEventListener('change', this.handleNativeChange.bind(this, input), true);
-    },
-    handleNativeChange: function (input, e) {
-      var files = input.files;
+    handleFileChange: function (e) {
+      var files = e.target.files;
       if (!files || !files.length) return;
       var file = files[0];
+      var self = this;
 
-      if (this._passthroughFile === file) {
-        // This is the file we just swapped in ourselves - let it go through.
-        this._passthroughFile = null;
+      if (!file.type || file.type.indexOf('video') === -1) {
+        this.setState({ status: 'กรุณาเลือกไฟล์วิดีโอเท่านั้น' });
+        e.target.value = '';
         return;
       }
-      if (!file.type || file.type.indexOf('video') === -1) return; // not a video, don't touch
-      if (file.size <= MAX_PASSTHROUGH_BYTES) return; // already small, don't touch
 
-      // Too big: intercept before Decap/React ever sees the original file.
-      e.stopImmediatePropagation();
-      e.preventDefault();
-
-      var self = this;
       var originalMB = Math.round((file.size / 1024 / 1024) * 10) / 10;
-      this.setState({ status: 'กำลังบีบอัดวิดีโอ (' + originalMB + 'MB)...' });
 
-      compressVideo(file, function (msg) {
-        self.setState({ status: msg });
-      })
-        .then(function (compressedFile) {
-          var newMB = Math.round((compressedFile.size / 1024 / 1024) * 10) / 10;
+      var prepared;
+      if (file.size > MAX_PASSTHROUGH_BYTES) {
+        this.setState({ status: 'กำลังบีบอัดวิดีโอ (' + originalMB + 'MB)...' });
+        prepared = compressVideo(file, function (msg) {
+          self.setState({ status: msg });
+        }).then(function (blob) {
+          var newMB = Math.round((blob.size / 1024 / 1024) * 10) / 10;
           self.setState({ status: 'บีบอัดเสร็จ: ' + originalMB + 'MB → ' + newMB + 'MB กำลังอัปโหลด...' });
-          self._passthroughFile = compressedFile;
-          var dt = new DataTransfer();
-          dt.items.add(compressedFile);
-          input.files = dt.files;
-          input.dispatchEvent(new Event('change', { bubbles: true }));
-          setTimeout(function () {
-            self.setState({ status: '' });
-          }, 5000);
-        })
-        .catch(function (err) {
+          return blob;
+        }).catch(function (err) {
           self.setState({
             status:
               'บีบอัดอัตโนมัติไม่สำเร็จ (' +
               (err && err.message ? err.message : 'unknown error') +
-              ') — กำลังอัปโหลดไฟล์เดิม ถ้าไฟล์ใหญ่มากอาจอัปไม่สำเร็จ แนะนำบีบอัดเองก่อน',
+              ') — กำลังอัปโหลดไฟล์เดิมแทน',
           });
-          self._passthroughFile = file;
-          var dt2 = new DataTransfer();
-          dt2.items.add(file);
-          input.files = dt2.files;
-          input.dispatchEvent(new Event('change', { bubbles: true }));
+          return file;
         });
+      } else {
+        this.setState({ status: 'กำลังอัปโหลด...' });
+        prepared = Promise.resolve(file);
+      }
+
+      prepared
+        .then(function (blob) {
+          return uploadToCloudinary(blob);
+        })
+        .then(function (url) {
+          self.setState({ status: 'อัปโหลดสำเร็จ' });
+          self.props.onChange(url);
+          setTimeout(function () { self.setState({ status: '' }); }, 4000);
+        })
+        .catch(function (err) {
+          self.setState({ status: 'อัปโหลดไม่สำเร็จ: ' + (err && err.message ? err.message : 'unknown error') });
+        });
+
+      e.target.value = '';
     },
-    componentDidUpdate: function () {
-      this.attachInterceptor();
+    handleRemove: function () {
+      this.props.onChange('');
     },
     render: function () {
-      var children = [window.h(OrigControl, this.props)];
-      if (this.state.status) {
+      var self = this;
+      var children = [];
+
+      if (this.props.value) {
         children.push(
-          window.h(
-            'div',
-            { style: { marginTop: '6px', fontSize: '13px', color: '#5a5a5a' } },
-            this.state.status
-          )
+          window.h('div', { style: { marginBottom: '8px' } }, [
+            window.h('video', {
+              src: this.props.value,
+              controls: true,
+              style: { maxWidth: '240px', maxHeight: '240px', display: 'block', marginBottom: '6px' },
+            }),
+            window.h(
+              'button',
+              { type: 'button', onClick: this.handleRemove.bind(this), style: { fontSize: '12px' } },
+              'ลบวิดีโอ'
+            ),
+          ])
         );
       }
-      return window.h('div', { ref: this.captureRef }, children);
+
+      children.push(
+        window.h('input', {
+          type: 'file',
+          accept: 'video/*',
+          onChange: this.handleFileChange.bind(this),
+        })
+      );
+
+      if (this.state.status) {
+        children.push(
+          window.h('div', { style: { marginTop: '6px', fontSize: '13px', color: '#5a5a5a' } }, this.state.status)
+        );
+      }
+
+      // Keep the underlying string control mounted (hidden) so Decap's own
+      // validation/required-field logic keeps working against this.props.value.
+      children.push(window.h('div', { style: { display: 'none' } }, [window.h(OrigControl, this.props)]));
+
+      return window.h('div', {}, children);
     },
   });
 
-  window.CMS.registerWidget('video-compress', VideoCompressControl, OrigPreview);
+  window.CMS.registerWidget('video-compress', VideoUploadControl, OrigPreview);
 })();

@@ -13,6 +13,78 @@ function corsHeaders(origin) {
   };
 }
 
+async function sha1Hex(input) {
+  const bytes = new TextEncoder().encode(input);
+  const digest = await crypto.subtle.digest("SHA-1", bytes);
+  return Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function handleUploadVideo(request, env) {
+  const origin = request.headers.get("origin") || "";
+  const headers = { ...corsHeaders(origin), "content-type": "application/json; charset=utf-8" };
+
+  if (request.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers });
+  }
+  if (request.method !== "POST") {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405, headers });
+  }
+  if (!env.CLOUDINARY_CLOUD_NAME || !env.CLOUDINARY_API_KEY || !env.CLOUDINARY_API_SECRET) {
+    return new Response(JSON.stringify({ error: "ยังไม่ได้ตั้งค่า Cloudinary บน Worker นี้" }), { status: 500, headers });
+  }
+
+  const contentType = request.headers.get("content-type") || "";
+  if (!contentType.startsWith("video/")) {
+    return new Response(JSON.stringify({ error: "ไฟล์ที่ส่งมาไม่ใช่วิดีโอ" }), { status: 400, headers });
+  }
+
+  const videoBuffer = await request.arrayBuffer();
+  if (videoBuffer.byteLength === 0) {
+    return new Response(JSON.stringify({ error: "ไม่มีข้อมูลไฟล์วิดีโอ" }), { status: 400, headers });
+  }
+  const MAX_BYTES = 95 * 1024 * 1024; // stay comfortably under Cloudinary's free-plan 100MB video cap
+  if (videoBuffer.byteLength > MAX_BYTES) {
+    return new Response(JSON.stringify({ error: "ไฟล์วิดีโอใหญ่เกินไป (จำกัดไม่เกิน 95MB)" }), { status: 400, headers });
+  }
+
+  const timestamp = Math.floor(Date.now() / 1000);
+  const folder = "kimngek-menu-videos";
+  // Cloudinary's signed-upload signature: sha1 of the params to sign (sorted by key,
+  // as key=value pairs joined with &, excluding file/api_key/signature/resource_type)
+  // with the account's api_secret appended.
+  const paramsToSign = `folder=${folder}&timestamp=${timestamp}${env.CLOUDINARY_API_SECRET}`;
+  const signature = await sha1Hex(paramsToSign);
+
+  const form = new FormData();
+  form.append("file", new Blob([videoBuffer], { type: contentType }), "upload.mp4");
+  form.append("api_key", env.CLOUDINARY_API_KEY);
+  form.append("timestamp", String(timestamp));
+  form.append("folder", folder);
+  form.append("signature", signature);
+
+  const uploadUrl = `https://api.cloudinary.com/v1_1/${env.CLOUDINARY_CLOUD_NAME}/video/upload`;
+  let cloudinaryResponse;
+  try {
+    cloudinaryResponse = await fetch(uploadUrl, { method: "POST", body: form });
+  } catch (e) {
+    return new Response(JSON.stringify({ error: "อัปโหลดไป Cloudinary ไม่สำเร็จ: " + (e && e.message ? e.message : "unknown") }), { status: 502, headers });
+  }
+
+  let resultJson;
+  try {
+    resultJson = await cloudinaryResponse.json();
+  } catch (e) {
+    return new Response(JSON.stringify({ error: "Cloudinary ตอบกลับมาในรูปแบบที่อ่านไม่ได้" }), { status: 502, headers });
+  }
+
+  if (!cloudinaryResponse.ok) {
+    const message = resultJson && resultJson.error && resultJson.error.message ? resultJson.error.message : "unknown error";
+    return new Response(JSON.stringify({ error: "Cloudinary ปฏิเสธไฟล์: " + message }), { status: 502, headers });
+  }
+
+  return new Response(JSON.stringify({ url: resultJson.secure_url }), { status: 200, headers });
+}
+
 function extractJsonObject(text) {
   // Models sometimes wrap JSON in prose or code fences - pull out the first {...} block.
   const start = text.indexOf("{");
@@ -129,6 +201,10 @@ export default {
 
     if (url.pathname === "/seo-assist") {
       return handleSeoAssist(request, env);
+    }
+
+    if (url.pathname === "/upload-video") {
+      return handleUploadVideo(request, env);
     }
 
     const isOAuthCallback = url.pathname === "/callback" || (

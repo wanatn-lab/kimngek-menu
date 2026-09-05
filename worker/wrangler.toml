@@ -8,6 +8,12 @@ binding = "AI"
 [vars]
 # Set to "1" when the GitHub repository is private.
 GITHUB_REPO_PRIVATE = "0"
+# Cloudinary account used to store menu videos (GitHub can't reliably take
+# files over ~900KB through Decap CMS, so videos go here instead).
+# Cloud name and API key aren't sensitive on their own - only the API secret
+# (set separately below) needs to stay private.
+CLOUDINARY_CLOUD_NAME = "xnnzo17i"
+CLOUDINARY_API_KEY = "553872251746624"
 
 [secrets]
-required = ["GITHUB_OAUTH_ID", "GITHUB_OAUTH_SECRET"]
+required = ["GITHUB_OAUTH_ID", "GITHUB_OAUTH_SECRET", "CLOUDINARY_API_SECRET"]
