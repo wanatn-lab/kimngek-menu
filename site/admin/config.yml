@@ -5,14 +5,14 @@ backend:
   base_url: "https://kimngek-cms-auth.wanat-n.workers.dev"
   auth_endpoint: auth
 
-media_folder: "images"
+media_folder: "site/images"
 public_folder: "/images"
 
 collections:
   - name: "site_settings"
     label: "ข้อมูลร้าน"
     files:
-      - file: "data/site.json"
+      - file: "site/data/site.json"
         label: "📍 ข้อมูลติดต่อร้าน"
         name: "site"
         description: "ชื่อร้าน ที่อยู่ เบอร์โทร เวลาเปิด-ปิด และพิกัดแผนที่"
@@ -28,14 +28,14 @@ collections:
           - { label: "พิกัด GPS ลองจิจูด", name: "gps_lng", widget: "number" }
           - { label: "ลิงก์ Facebook", name: "facebook_url", widget: "string" }
 
-      - file: "data/banner.json"
+      - file: "site/data/banner.json"
         label: "📢 แบนเนอร์ประกาศ"
         name: "banner"
         description: "แถบข้อความแจ้งเตือนบนสุดของเว็บ เช่น วันหยุด/โปรโมชัน (เว้นว่าง = ไม่แสดงแบนเนอร์)"
         fields:
           - { label: "ข้อความแบนเนอร์ (เว้นว่าง = ไม่แสดง)", name: "banner_text", widget: "string", required: false }
 
-      - file: "data/hero.json"
+      - file: "site/data/hero.json"
         label: "🏠 หน้าแรก (Hero)"
         name: "hero"
         description: "หัวข้อใหญ่ คำโปรย และรูปภาพหลักที่เห็นทันทีเมื่อเปิดเว็บ"
@@ -45,7 +45,7 @@ collections:
           - { label: "คำโปรยใต้หัวข้อ", name: "hero_subtitle", widget: "text" }
           - { label: "รูปหน้าแรก (ระบบจะย่อ/บีบอัดให้อัตโนมัติ)", name: "hero_image", widget: "compressed-image" }
 
-      - file: "data/about.json"
+      - file: "site/data/about.json"
         label: "ℹ️ เกี่ยวกับเรา"
         name: "about"
         description: "หัวข้อและเนื้อหาของส่วน “เรื่องราวร้าน”"
@@ -58,7 +58,7 @@ collections:
   - name: "menu"
     label: "🍽️ เมนูอาหาร"
     files:
-      - file: "data/menu.json"
+      - file: "site/data/menu.json"
         label: "รายการเมนูทั้งหมด"
         name: "menu"
         description: "ลากไอคอน ⠿ ที่แถบซ้ายของแต่ละรายการเพื่อสลับลำดับการแสดงผลบนเว็บ"
@@ -79,7 +79,7 @@ collections:
 
   - name: "blog"
     label: "✏️ บทความ SEO / GEO"
-    folder: "data/blog"
+    folder: "site/data/blog"
     create: true
     slug: "{{fields.slug}}"
     extension: "md"
