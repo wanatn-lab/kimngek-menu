@@ -74,7 +74,7 @@ collections:
               - { label: "ราคา (เช่น 60 หรือ 280/กก.)", name: "price", widget: "string" }
               - { label: "รูปเมนู", name: "image", widget: "file", hint: "แนะนำย่อรูปเป็น 1200x1200 พิกเซลก่อนอัปโหลด จะได้ไฟล์ไม่หนักเกินไป" }
               - { label: "หมวดหมู่", name: "category", widget: "string", required: false, hint: "เช่น เมนูข้าว, ซื้อกลับบ้าน" }
-              - { label: "วิดีโอเมนู (อัปโหลดไฟล์ MP4 ที่บีบอัดแล้ว แนะนำไม่เกิน 10MB และไม่เกิน 15 วินาที)", name: "video", widget: "file", required: false, hint: "กดเลือกไฟล์ได้เลยเหมือนอัปโหลดรูป — บีบอัดไฟล์มาก่อนอัปโหลดด้วยนะครับ" }
+              - { label: "วิดีโอเมนู (อัปโหลดไฟล์วิดีโอจากมือถือได้เลย ระบบจะบีบอัดให้อัตโนมัติ)", name: "video", widget: "video-compress", required: false, hint: "แนะนำไม่เกิน 15 วินาที — ไฟล์ที่ใหญ่กว่า 6MB จะถูกบีบอัดให้อัตโนมัติก่อนอัปโหลด (อาจใช้เวลาสักครู่)" }
               - { label: "ป้าย เมนูแนะนำ / เมนูต้องลอง", name: "featured", widget: "boolean", default: false }
 
   - name: "blog"
