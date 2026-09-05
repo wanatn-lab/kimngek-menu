@@ -51,22 +51,22 @@
       "featured": false
     },
     {
+      "id": "moo-dang-pure",
+      "name": "หมูแดงล้วน",
+      "desc": "หมูแดงเกรดพิธีล้วนทานเต็มๆ ทานได้หลายคน อิ่มแบบจุกๆเหมาะกับทานหลายคน จำนวน 250 กรัม",
+      "price": "180",
+      "image": "/images/moo-dang-kilo.jpg",
+      "category": "เมนูทานเล่น",
+      "video": "",
+      "featured": false
+    },
+    {
       "id": "khao-moo-krob",
       "name": "ข้าวหมูกรอบ",
       "desc": "หนังกรอบ เนื้อนุ่ม ราดซอสสูตรเดียวกับหมูแดง",
       "price": "65",
       "image": "/images/khao-moo-krob.jpg",
       "category": "เมนูข้าว",
-      "video": "",
-      "featured": false
-    },
-    {
-      "id": "moo-dang-kilo",
-      "name": "หมูแดงชั่งกิโล",
-      "desc": "ซื้อกลับบ้าน แถมซอสเกรดพิธีแยกถุง (ขั้นต่ำครึ่งกิโล)",
-      "price": "280/กก.",
-      "image": "/images/moo-dang-kilo.jpg",
-      "category": "ซื้อกลับบ้าน",
       "video": "",
       "featured": false
     }
