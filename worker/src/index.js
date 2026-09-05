@@ -13,6 +13,15 @@ function corsHeaders(origin) {
   };
 }
 
+function slugify(s) {
+  return String(s || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+}
+
 async function sha1Hex(input) {
   const bytes = new TextEncoder().encode(input);
   const digest = await crypto.subtle.digest("SHA-1", bytes);
@@ -240,15 +249,6 @@ async function handleOrganizeArticle(request, env) {
     return new Response(JSON.stringify({ error: "AI ตอบกลับมาในรูปแบบที่อ่านไม่ได้ ลองใหม่อีกครั้ง" }), { status: 502, headers });
   }
 
-  function slugify(s) {
-    return String(s || "")
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "")
-      .slice(0, 80);
-  }
-
   return new Response(
     JSON.stringify({
       title: typeof parsed.title === "string" ? parsed.title : "",
@@ -260,6 +260,62 @@ async function handleOrganizeArticle(request, env) {
     }),
     { status: 200, headers }
   );
+}
+
+async function handleSlugifyTitle(request, env) {
+  const origin = request.headers.get("origin") || "";
+  const headers = { ...corsHeaders(origin), "content-type": "application/json; charset=utf-8" };
+
+  if (request.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers });
+  }
+  if (request.method !== "POST") {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405, headers });
+  }
+  if (!env.AI) {
+    return new Response(JSON.stringify({ error: "AI binding ยังไม่ได้ตั้งค่าบน Worker นี้" }), { status: 500, headers });
+  }
+
+  let payload;
+  try {
+    payload = await request.json();
+  } catch (e) {
+    return new Response(JSON.stringify({ error: "อ่านข้อมูลที่ส่งมาไม่ได้ (ต้องเป็น JSON)" }), { status: 400, headers });
+  }
+
+  const title = (payload && payload.title ? String(payload.title) : "").slice(0, 300);
+  if (!title.trim()) {
+    return new Response(JSON.stringify({ error: "ไม่มีชื่อเรื่องให้แปลง" }), { status: 400, headers });
+  }
+
+  const systemPrompt =
+    "แปลงชื่อเรื่องบทความ (มักเป็นภาษาไทย) เป็น slug สำหรับ URL: ภาษาอังกฤษล้วน ตัวเล็กทั้งหมด คั่นด้วยขีดกลาง (-) " +
+    "ไม่มีเว้นวรรคหรืออักขระพิเศษ สั้นกระชับแต่สื่อความหมาย ตอบกลับเป็น JSON เท่านั้น รูปแบบ {\"slug\": \"...\"} ห้ามมีข้อความอื่น";
+
+  let aiResult;
+  try {
+    aiResult = await env.AI.run(SEO_ASSIST_MODEL, {
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: "ชื่อเรื่อง: " + title }
+      ]
+    });
+  } catch (e) {
+    return new Response(JSON.stringify({ error: "เรียกใช้ AI ไม่สำเร็จ: " + (e && e.message ? e.message : "unknown") }), { status: 502, headers });
+  }
+
+  const rawText =
+    (aiResult && aiResult.response) ||
+    (aiResult && aiResult.choices && aiResult.choices[0] && aiResult.choices[0].message && aiResult.choices[0].message.content) ||
+    "";
+  let parsed;
+  try {
+    parsed = extractJsonObject(rawText);
+  } catch (e) {
+    return new Response(JSON.stringify({ error: "AI ตอบกลับมาในรูปแบบที่อ่านไม่ได้" }), { status: 502, headers });
+  }
+
+  return new Response(JSON.stringify({ slug: slugify(parsed.slug || "") }), { status: 200, headers });
 }
 
 function html(body, status = 200) {
@@ -298,6 +354,10 @@ export default {
 
     if (url.pathname === "/organize-article") {
       return handleOrganizeArticle(request, env);
+    }
+
+    if (url.pathname === "/slugify-title") {
+      return handleSlugifyTitle(request, env);
     }
 
     const isOAuthCallback = url.pathname === "/callback" || (

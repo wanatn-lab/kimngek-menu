@@ -87,7 +87,7 @@ collections:
     summary: "{{title}} — {{fields.published}}"
     fields:
       - { label: "วางบทความที่นี่ (ไม่บันทึก แค่ช่วยเติมช่องด้านล่าง)", name: "quick_paste", widget: "quick-paste", required: false }
-      - { label: "หัวข้อบทความ", name: "title", widget: "string" }
+      - { label: "หัวข้อบทความ", name: "title", widget: "title-with-slug" }
       - { label: "Meta description (สำหรับ SEO)", name: "meta_description", widget: "seo-assist" }
       - { label: "Slug (ภาษาอังกฤษ, ห้ามซ้ำ, ใช้เป็นชื่อไฟล์ URL)", name: "slug", widget: "string", hint: "เช่น khao-moo-dang-tips — ห้ามใส่เว้นวรรค" }
       - { label: "หมวดหมู่ / ป้ายแท็ก", name: "category", widget: "string", hint: "เช่น แนะนำร้าน, เบื้องหลังครัว" }
