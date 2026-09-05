@@ -59,16 +59,6 @@
       "category": "เมนูทานเล่น",
       "video": "",
       "featured": false
-    },
-    {
-      "id": "khao-moo-krob",
-      "name": "ข้าวหมูกรอบ",
-      "desc": "หนังกรอบ เนื้อนุ่ม ราดซอสสูตรเดียวกับหมูแดง",
-      "price": "65",
-      "image": "/images/khao-moo-krob.jpg",
-      "category": "เมนูข้าว",
-      "video": "",
-      "featured": false
     }
   ]
 }
