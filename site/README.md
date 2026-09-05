@@ -38,4 +38,4 @@ site/
 
 ## Deploy บน Cloudflare
 
-จากโฟลเดอร์นี้รัน `npx wrangler deploy --name kimngek-menu` โดยมี `wrangler.toml` สำหรับ Workers Static Assets อยู่แล้ว หลัง deploy ให้ตรวจ `https://kimngek-menu.wanat-n.workers.dev/` และแก้ canonical/OG/sitemap เป็นโดเมนจริงหากมี custom domain
+จากโฟลเดอร์นี้รัน `npx wrangler deploy --name kimngek-khaomoodang` โดยมี `wrangler.toml` สำหรับ Workers Static Assets อยู่แล้ว หลัง deploy ให้ตรวจ `https://kimngek-khaomoodang.wanat-n.workers.dev/` และแก้ canonical/OG/sitemap เป็นโดเมนจริงหากมี custom domain

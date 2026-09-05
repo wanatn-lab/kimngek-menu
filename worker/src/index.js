@@ -62,7 +62,7 @@ export default {
     }
 
     if (url.pathname === "/") {
-      return html('<p>นี่คือบริการยืนยันตัวตนสำหรับ CMS</p><p>กลับไปที่ <a href="https://kimngek-menu.wanat-n.workers.dev/admin/">หน้า CMS</a> เพื่อแก้ไขเว็บไซต์</p>');
+      return html('<p>นี่คือบริการยืนยันตัวตนสำหรับ CMS</p><p>กลับไปที่ <a href="https://kimngek-khaomoodang.wanat-n.workers.dev/admin/">หน้า CMS</a> เพื่อแก้ไขเว็บไซต์</p>');
     }
 
     if (url.pathname === "/health") {

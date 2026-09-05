@@ -14,7 +14,7 @@ const ROOT = path.join(__dirname, '..');
 const SITE = path.join(ROOT, 'site');
 const BLOG_SRC = path.join(SITE, 'data', 'blog');
 const BLOG_OUT = path.join(SITE, 'blog');
-const SITE_URL = 'https://kimngek-menu.wanat-n.workers.dev';
+const SITE_URL = 'https://kimngek-khaomoodang.wanat-n.workers.dev';
 
 function readJson(p) {
   return JSON.parse(fs.readFileSync(p, 'utf8'));

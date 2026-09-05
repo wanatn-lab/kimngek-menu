@@ -26,4 +26,4 @@ User-agent: anthropic-ai
 Allow: /
 Disallow: /admin/
 
-Sitemap: https://kimngek-menu.wanat-n.workers.dev/sitemap.xml
+Sitemap: https://kimngek-khaomoodang.wanat-n.workers.dev/sitemap.xml
