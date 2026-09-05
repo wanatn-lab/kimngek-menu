@@ -77,14 +77,18 @@ async function handleSeoAssist(request, env) {
     return new Response(JSON.stringify({ error: "เรียกใช้ AI ไม่สำเร็จ: " + (e && e.message ? e.message : "unknown") }), { status: 502, headers });
   }
 
-  const rawText = aiResult && aiResult.response ? aiResult.response : "";
+  // This model returns an OpenAI-style chat-completion shape
+  // (choices[0].message.content) rather than the simpler { response } shape
+  // some other Workers AI models use - support both.
+  const rawText =
+    (aiResult && aiResult.response) ||
+    (aiResult && aiResult.choices && aiResult.choices[0] && aiResult.choices[0].message && aiResult.choices[0].message.content) ||
+    "";
   let parsed;
   try {
     parsed = extractJsonObject(rawText);
   } catch (e) {
-    let debugShape;
-    try { debugShape = JSON.stringify(aiResult).slice(0, 4000); } catch (e2) { debugShape = String(aiResult); }
-    return new Response(JSON.stringify({ error: "AI ตอบกลับมาในรูปแบบที่อ่านไม่ได้ ลองใหม่อีกครั้ง", debugRaw: rawText.slice(0, 4000), debugShape: debugShape }), { status: 502, headers });
+    return new Response(JSON.stringify({ error: "AI ตอบกลับมาในรูปแบบที่อ่านไม่ได้ ลองใหม่อีกครั้ง" }), { status: 502, headers });
   }
 
   return new Response(
