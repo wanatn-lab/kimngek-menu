@@ -20,6 +20,13 @@ function readJson(p) {
   return JSON.parse(fs.readFileSync(p, 'utf8'));
 }
 
+const TH_MONTHS = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+function formatThaiDate(iso) {
+  const d = new Date(iso + 'T00:00:00');
+  if (isNaN(d.getTime())) return iso;
+  return d.getDate() + ' ' + TH_MONTHS[d.getMonth()] + ' ' + (d.getFullYear() + 543);
+}
+
 function escapeHtml(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -271,7 +278,7 @@ function renderPostPage(site, post, allPosts) {
     extraSchemas: [blogSchema, breadcrumb]
   });
   return '<!DOCTYPE html>\n<html lang="th">\n<head>\n' + head + '\n</head>\n<body>' + hf.header + '\n<main class="article">\n' +
-    '  <p class="meta">' + escapeHtml(post.data.category || '') + '</p>\n' +
+    '  <p class="meta">' + escapeHtml(post.data.category || '') + ' · เขียนโดยทีมงานร้านกิมเง็ก · ' + escapeHtml(formatThaiDate(post.data.date)) + '</p>\n' +
     '  <h1>' + escapeHtml(post.data.title) + '</h1>\n' +
     '  <img src="..' + post.data.cover_image + '" alt="' + escapeHtml(post.data.title) + '">\n' +
     '  ' + post.bodyHtml + '\n' +
