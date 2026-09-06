@@ -46,17 +46,17 @@ h1 em{font-style:normal;color:#EBC77A}
 .btn-gold:hover{background:#D2A24A;color:#2B0B07}
 .btn-out{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 24px;border:1.5px solid rgba(235,199,122,.5);color:#EBC77A;font:600 15px/1 "Noto Sans Thai",sans-serif}
 .btn-out:hover{background:rgba(235,199,122,.12);color:#EBC77A}
-.seo-line{margin:18px 0 0;font:400 11.5px/1.8 "Noto Sans Thai",sans-serif;color:#A98A64}
+.seo-line{margin:18px 0 0;font:400 11.5px/1.8 "Noto Sans Thai",sans-serif;color:#CBA97E}
 .frame{border:1px solid rgba(235,199,122,.45);padding:8px}
 .frame img{width:100%;aspect-ratio:4/3;object-fit:cover}
-.cap{margin:9px 0 0;font:400 11.5px/1.6 "Noto Sans Thai",sans-serif;color:#A98A64}
+.cap{margin:9px 0 0;font:400 11.5px/1.6 "Noto Sans Thai",sans-serif;color:#CBA97E}
 
 /* trust band */
 .band{background:#4A0F0A;border-top:1px solid rgba(235,199,122,.25)}
 .band-grid{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:1fr}
 .tcell{display:flex;gap:12px;align-items:flex-start;padding:18px 16px;border-bottom:1px solid rgba(235,199,122,.16)}
 .tcell:last-child{border-bottom:none}
-.tcell h3{font:600 15px/1.4 "Noto Serif Thai",serif;color:#EBC77A}
+.tcell h2{font:600 15px/1.4 "Noto Serif Thai",serif;margin:0;color:#EBC77A}
 .tcell p{margin:4px 0 0;font:400 13px/1.7 "Noto Sans Thai",sans-serif;color:#DCC3A2}
 .tcell .ico{flex:none;font-size:19px}
 
@@ -143,7 +143,7 @@ blockquote{margin:18px 0;padding:16px 18px;background:#57120C;color:#EBC77A;font
 .cline .ico{flex:none;font-size:17px}
 .cline .lb{font:600 12px/1 "Noto Sans Thai",sans-serif;color:#C9A97C;letter-spacing:.1em}
 .cline .vl{margin-top:6px;font:400 14.5px/1.8 "Noto Sans Thai",sans-serif;color:#F0DFC4}
-.cline .vl a{color:#EBC77A}
+.cline .vl a{color:#EBC77A;text-decoration:underline}
 .cbtns{display:grid;gap:10px;margin-top:16px}
 .cbtns .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .map{border:1px solid rgba(235,199,122,.35);padding:8px}
@@ -156,7 +156,7 @@ footer .sl{margin:7px 0 0;font:400 13.5px/1.75 "Noto Sans Thai",sans-serif;color
 footer nav{display:flex;flex-wrap:wrap;gap:10px 20px;margin-top:18px;font:500 13.5px/1 "Noto Sans Thai",sans-serif}
 footer nav a{color:#E3CCAC}
 .nap{margin-top:20px;padding-top:16px;border-top:1px solid rgba(235,199,122,.2);font:400 13px/1.9 "Noto Sans Thai",sans-serif;color:#C4AB8A}
-.nap a{color:#EBC77A}
+.nap a{color:#EBC77A;text-decoration:underline}
 .copy{margin-top:10px;color:#9C8567}
 
 /* sticky call bar */
