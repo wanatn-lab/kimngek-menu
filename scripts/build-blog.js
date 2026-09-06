@@ -172,7 +172,8 @@ function headTags(site, opts) {
   lines.push('<meta name="twitter:image" content="' + opts.image + '">');
   lines.push('<link rel="preconnect" href="https://fonts.googleapis.com">');
   lines.push('<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>');
-  lines.push('<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Noto+Serif+Thai:wght@500;600;700&display=swap" rel="stylesheet">');
+  lines.push('<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Noto+Serif+Thai:wght@500;600;700&display=swap" onload="this.onload=null;this.rel=\'stylesheet\'">');
+  lines.push('<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Noto+Serif+Thai:wght@500;600;700&display=swap"></noscript>');
   lines.push('<link rel="stylesheet" href="../assets/style.css">');
   lines.push('<script type="application/ld+json">' + JSON.stringify(restaurantSchema(site)) + '</script>');
   (opts.extraSchemas || []).forEach(function (s) {
