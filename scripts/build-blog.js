@@ -68,12 +68,28 @@ function markdownToHtml(md) {
   let i = 0;
   function isBullet(l) { return /^[-*+]\s/.test(l.trim()); }
   function isHeading(l) { return /^#{1,3}\s/.test(l); }
+  function isTableRow(l) { return /^\s*\|.*\|\s*$/.test(l); }
+  function cells(l) { return l.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map(function (c) { return c.trim(); }); }
   while (i < lines.length) {
     const line = lines[i];
     if (!line.trim()) { i++; continue; }
     if (line.startsWith('### ')) { html.push('<h3>' + inline(line.slice(4).trim()) + '</h3>'); i++; continue; }
     if (line.startsWith('## ')) { html.push('<h2>' + inline(line.slice(3).trim()) + '</h2>'); i++; continue; }
     if (line.startsWith('# ')) { html.push('<h2>' + inline(line.slice(2).trim()) + '</h2>'); i++; continue; }
+    if (isTableRow(line)) {
+      // ตาราง markdown (ยอมให้มีบรรทัดว่างคั่นระหว่างแถว เพราะ editor มักแทรกมาให้)
+      const rows = [];
+      while (i < lines.length && (isTableRow(lines[i]) || (!lines[i].trim() && i + 1 < lines.length && isTableRow(lines[i + 1])))) {
+        if (lines[i].trim()) rows.push(cells(lines[i]));
+        i++;
+      }
+      const body = rows.filter(function (r) { return !r.every(function (c) { return /^:?-{2,}:?$/.test(c); }); });
+      const headRow = body.shift() || [];
+      html.push('<div class="tablewrap"><table><thead><tr>' + headRow.map(function (c) { return '<th>' + inline(c) + '</th>'; }).join('') +
+        '</tr></thead><tbody>' + body.map(function (r) { return '<tr>' + r.map(function (c) { return '<td>' + inline(c) + '</td>'; }).join('') + '</tr>'; }).join('') +
+        '</tbody></table></div>');
+      continue;
+    }
     if (isBullet(line)) {
       const items = [];
       while (i < lines.length && isBullet(lines[i])) {
@@ -85,7 +101,7 @@ function markdownToHtml(md) {
     }
     const para = [line];
     i++;
-    while (i < lines.length && lines[i].trim() && !isHeading(lines[i]) && !isBullet(lines[i])) {
+    while (i < lines.length && lines[i].trim() && !isHeading(lines[i]) && !isBullet(lines[i]) && !isTableRow(lines[i])) {
       para.push(lines[i]);
       i++;
     }
@@ -321,6 +337,24 @@ function renderBlogIndex(site, posts) {
     '</main>\n' + hf.footer + '\n<script src="../assets/site.js" defer></script>\n</body>\n</html>\n';
 }
 
+// รายการบทความบนหน้าแรก (สร้างใหม่ทุกครั้งที่ build ระหว่าง marker ใน site/index.html)
+function updateHomeBlogList(posts) {
+  const file = path.join(SITE, 'index.html');
+  const html = fs.readFileSync(file, 'utf8');
+  const START = '<!-- BLOG-LIST:START -->', END = '<!-- BLOG-LIST:END -->';
+  const a = html.indexOf(START), b = html.indexOf(END);
+  if (a === -1 || b === -1) { console.log('ข้าม: ไม่พบ marker BLOG-LIST ใน index.html'); return; }
+  const rows = posts.map(function (p) {
+    return '      <a class="brow" href="/blog/' + p.data.slug + '">\n' +
+      '        <img src="' + String(p.data.cover_image || '').replace(/^\//, '') + '" alt="' + escapeHtml(p.data.title) + '" loading="lazy" width="74" height="74">\n' +
+      '        <div style="flex:1;min-width:0"><span class="k">' + escapeHtml(p.data.category || '') + '</span><h3>' + escapeHtml(p.data.title) + '</h3></div>\n' +
+      '        <span class="arw" aria-hidden="true">→</span>\n' +
+      '      </a>';
+  }).join('\n');
+  fs.writeFileSync(file, html.slice(0, a + START.length) + '\n' + rows + '\n      ' + html.slice(b), 'utf8');
+  console.log('เขียนแล้ว: รายการบทความในหน้าแรก (' + posts.length + ' รายการ)');
+}
+
 function renderSitemap(posts) {
   const today = new Date().toISOString().slice(0, 10);
   const urls = [
@@ -341,7 +375,10 @@ function renderSitemap(posts) {
 function renderRedirects(posts) {
   const lines = [
     '/index.html / 301',
-    '/blog/index.html /blog/ 301'
+    '/blog/index.html /blog/ 301',
+    // slug เก่าที่เปลี่ยนชื่อแล้ว
+    '/blog/kim-ngiek-khao-mu-daeng-suphanburi /blog/kimngek-khao-moo-dang-suphanburi 301',
+    '/blog/kim-ngiek-khao-mu-daeng-suphanburi.html /blog/kimngek-khao-moo-dang-suphanburi 301'
   ].concat(posts.map(function (p) {
     return '/blog/' + p.data.slug + '.html /blog/' + p.data.slug + ' 301';
   }));
@@ -368,6 +405,8 @@ function main() {
 
   fs.writeFileSync(path.join(BLOG_OUT, 'index.html'), renderBlogIndex(site, posts), 'utf8');
   console.log('เขียนแล้ว: site/blog/index.html');
+
+  updateHomeBlogList(posts);
 
   fs.writeFileSync(path.join(SITE, 'sitemap.xml'), renderSitemap(posts), 'utf8');
   console.log('เขียนแล้ว: site/sitemap.xml');

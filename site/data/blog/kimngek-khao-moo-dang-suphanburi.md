@@ -4,9 +4,9 @@ title: "กิมเง็ก ข้าวหมูแดงเกรดพิ�
 meta_description: ตามหาข้าวหมูแดงอร่อยๆ ในสุพรรณบุรี? ต้องลอง "กิมเง็ก"
   หมูแดงนุ่มสไตล์ฮ่องกง ราดน้ำราดรสเด็ดสไตล์สุพรรณบุรี เปิดวันอังคาร-อาทิตย์
   07:30-14:00 น. โทร 085-529-8799
-slug: kim-ngiek-khao-mu-daeng-suphanburi
+slug: kimngek-khao-moo-dang-suphanburi
 category: แนะนำร้าน
-cover_image: /images/ข้าวหมูแดงสุพรรณ.jpeg
+cover_image: /images/hero-khao-moo-dang.jpg
 date: 2026-09-24
 pinned: true
 published: true
