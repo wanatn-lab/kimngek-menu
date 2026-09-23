@@ -6,7 +6,7 @@ meta_description: ตามหาข้าวหมูแดงอร่อย�
   07:30-14:00 น. โทร 085-529-8799
 slug: kimngek-khao-moo-dang-suphanburi
 category: แนะนำร้าน
-cover_image: /images/hero-khao-moo-dang.jpg
+cover_image: /images/photo-clarity-enhancement-.jpg.jpg
 date: 2026-09-24
 pinned: true
 published: true
