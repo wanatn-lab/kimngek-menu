@@ -331,7 +331,7 @@ function renderBlogIndex(site, posts) {
   }).join('\n');
   return '<!DOCTYPE html>\n<html lang="th">\n<head>\n' + head + '\n</head>\n<body>' + hf.header + '\n<main class="sec" style="padding-top:32px">\n' +
     '  <div class="shead"><span class="num">๐๓</span><span class="kicker">บทความทั้งหมด</span></div>\n' +
-    '  <h2>ความรู้เรื่องข้าวหมูแดง</h2>\n' +
+    '  <h1 class="page-title">ความรู้เรื่องข้าวหมูแดง</h1>\n' +
     '  <div class="rule"></div>\n' +
     '  <div class="list bloglist">\n' + rows + '\n  </div>\n' +
     '</main>\n' + hf.footer + '\n<script src="../assets/site.js" defer></script>\n</body>\n</html>\n';
