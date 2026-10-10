@@ -67,6 +67,7 @@ function markdownToHtml(md) {
   const html = [];
   let i = 0;
   function isBullet(l) { return /^[-*+]\s/.test(l.trim()); }
+  function isOrdered(l) { return /^\d+[.)]\s/.test(l.trim()); }
   function isHeading(l) { return /^#{1,3}\s/.test(l); }
   function isTableRow(l) { return /^\s*\|.*\|\s*$/.test(l); }
   function cells(l) { return l.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map(function (c) { return c.trim(); }); }
@@ -99,9 +100,18 @@ function markdownToHtml(md) {
       html.push('<ul>' + items.join('') + '</ul>');
       continue;
     }
+    if (isOrdered(line)) {
+      const items = [];
+      while (i < lines.length && isOrdered(lines[i])) {
+        items.push('<li>' + inline(lines[i].trim().replace(/^\d+[.)]\s+/, '')) + '</li>');
+        i++;
+      }
+      html.push('<ol>' + items.join('') + '</ol>');
+      continue;
+    }
     const para = [line];
     i++;
-    while (i < lines.length && lines[i].trim() && !isHeading(lines[i]) && !isBullet(lines[i]) && !isTableRow(lines[i])) {
+    while (i < lines.length && lines[i].trim() && !isHeading(lines[i]) && !isBullet(lines[i]) && !isOrdered(lines[i]) && !isTableRow(lines[i])) {
       para.push(lines[i]);
       i++;
     }
